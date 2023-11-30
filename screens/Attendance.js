@@ -55,7 +55,7 @@ const Attendance = () => {
     }
   });
 
-  const saveTimeToFirestore = async (eventType, timestamp) => {
+  const saveTimeToFirestore = async (eventType) => {
     console.log('Saving time to Firestore...');
 
     try {
