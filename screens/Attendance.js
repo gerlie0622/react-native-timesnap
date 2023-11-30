@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { dbFirestore } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
@@ -28,14 +31,60 @@ const Attendance = () => {
     };
   }
 
+  const handleTimeIn = () => {
+    console.log('Time In button pressed');
+    const currentTime = new Date().toISOString();
+    saveTimeToFirestore('Time In', currentTime);
+  };
+
+  const handleTimeOut = () => {
+    console.log('Time Out button pressed');
+    const currentTime = new Date().toISOString();
+    saveTimeToFirestore('Time Out', currentTime);
+  };
+
+  const auth = getAuth();
+  let userEmail = '';
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userEmail = user.email;
+    } else {
+      // User is not logged in
+      userEmail = ''; // Handle accordingly
+    }
+  });
+
+  const saveTimeToFirestore = async (eventType, timestamp) => {
+    console.log('Saving time to Firestore...');
+
+    try {
+      // Reference to the Firestore collection and document
+      const timeEntriesRef = collection(dbFirestore, "timeEntries");
+  
+      // Adding a document to the 'timeEntries' collection with auto-generated ID
+      const autoIdDocRef = await addDoc(timeEntriesRef, {
+        userEmail,
+        eventType,
+        timestamp: getCurrentDateTime().time,
+        date: getCurrentDateTime().date,
+      });
+      
+  
+      console.log('Time saved successfully with ID:', autoIdDocRef.id);
+    } catch (error) {
+      console.error('Error saving time:', error);
+    }
+  };  
+
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
       <Text style={styles.date}>{currentDateTime.date}</Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity title='Time In' onPress={handleTimeIn} style={styles.button}>
         <Text style={styles.buttonText}>Time In</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity title='Time Out' onPress={handleTimeOut} style={styles.button}>
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
     </View>
@@ -56,7 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 20,
     marginBottom: 50,
-    color: 'gray', // Added color to make the date visible
+    color: 'gray',
   },
   button: {
     backgroundColor: '#0782F9',
