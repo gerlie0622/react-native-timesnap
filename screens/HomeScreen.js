@@ -9,7 +9,7 @@ const HomeScreen = () => {
  
 
   const handleAttendance = () => {
-    console.log('Attendance button clicked');
+    navigation.navigate("Attendance")
   };
 
   const handleSchedule = () => {
