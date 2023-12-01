@@ -6,30 +6,25 @@ import { auth, firestore } from '../firebase'
 const HomeScreen = () => {
   const navigation = useNavigation()
 
- 
-
   const handleAttendance = () => {
     navigation.navigate("Attendance")
   };
 
   const handleSchedule = () => {
-    // Add your schedule logic here
     console.log('Schedule button clicked');
   };
   const handleSalary = () => {
-    // Add your salary logic here
     console.log('Salary button clicked');
   };
 
   const handleCreateAccount = () => {
-    
       navigation.navigate("CreateAccount")
     }
 
-    const handleAboutUs = () => {
-      // Add your about us logic here
-      console.log('About Us button clicked');
-    };
+
+    const handleForgotPassword = () => {
+      navigation.navigate("ForgotPassword")
+    }
 
     const handleSignOut = () => {
       auth
@@ -62,8 +57,8 @@ return (
         <Text style={styles.buttonText}>CreateAccount</Text>
       </TouchableOpacity>
       
-  <TouchableOpacity style={styles.button} onPress={handleAboutUs}>
-        <Text style={styles.buttonText}>About Us</Text>
+  <TouchableOpacity style={styles.button} onPress={handleForgotPassword}>
+        <Text style={styles.buttonText}>Forgot Password</Text>
       </TouchableOpacity>
 
 
