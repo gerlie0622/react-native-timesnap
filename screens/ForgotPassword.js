@@ -8,8 +8,8 @@ const ForgotPassword = () => {
     const user = auth.currentUser;
 
     if (user) {
-      user
-        .sendEmailVerification()
+      auth
+        .sendPasswordResetEmail(user.email)
         .then(() => {
           alert('Password reset email sent. Please check your email.');
         })
@@ -24,7 +24,8 @@ const ForgotPassword = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.messageText}>
-        Hi, {auth.currentUser?.email}! To reset your password, please click the button below.
+        Hi, {auth.currentUser?.email}! To reset your password, please click the button below. 
+        We will send you an email with instructions.
       </Text>
       <TouchableOpacity
         onPress={sendPasswordResetEmail}
