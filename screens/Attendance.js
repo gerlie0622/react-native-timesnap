@@ -4,7 +4,7 @@ import { dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-const Attendance = () => {
+const Attendance = ( {updateCounts} ) => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
 
   useEffect(() => {
@@ -72,6 +72,7 @@ const Attendance = () => {
       
   
       console.log('Time saved successfully with ID:', autoIdDocRef.id);
+      updateCounts();
     } catch (error) {
       console.error('Error saving time:', error);
     }
