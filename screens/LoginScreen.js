@@ -2,12 +2,15 @@ import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { auth } from '../firebase'
+import { dbFirestore } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  
+const navigation = useNavigation();
   const handleSignUp = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
@@ -25,14 +28,26 @@ const LoginScreen = () => {
   const handleLogin = () => {
     auth
       .signInWithEmailAndPassword(email, password)
-      .then(userCredentials => {
+      .then(async (userCredentials) => {
         const user = userCredentials.user;
-        console.log('Logged in with:', user.email);
+        // Fetch user data from Firestore to determine type
+        const userDoc = await dbFirestore.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+
+        if (userData && userData.type) {
+          if (userData.type === 'admin') {
+            navigation.navigate('HomeScreen', { user: userData });
+          } else {
+            navigation.navigate('EmployeeHomeScreen', { user: userData });
+          }
+        } else {
+          console.error('User data not found or missing type');
+        }
       })
-      .catch(error => alert(error.message))     
+      .catch((error) => alert(error.message));   
   };
 
-  const navigation = useNavigation();
+
   useEffect(() => {
   const unsubscribe = auth.onAuthStateChanged(user => {
     if (user) {
