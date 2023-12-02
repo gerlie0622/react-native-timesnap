@@ -1,12 +1,13 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
 import { auth } from '../firebase'
 import { dbFirestore } from '../firebase';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false); 
 
 const navigation = useNavigation();
   const handleSignUp = () => {
@@ -25,27 +26,26 @@ const navigation = useNavigation();
   
   const handleLogin = async () => {
     try {
+      setLoading(true);
+
       const userCredentials = await auth.signInWithEmailAndPassword(email, password);
       const user = userCredentials.user;
-  
+
       // Fetch user data from Firestore to determine type
       const usersCollectionRef = dbFirestore.collection('users');
-      
-      // Use where clause to find the document by user's UID
       const userDocSnapshot = await usersCollectionRef.where('uid', '==', user.uid).get();
-  
+
       if (!userDocSnapshot.empty) {
-        // If there are matching documents, get the first one
         const userDoc = userDocSnapshot.docs[0];
         const userData = userDoc.data();
-  
+
         console.log('User Data:', userData);
-  
+
         if (userData && userData.type) {
           console.log('User Type:', userData.type);
-  
+
           if (userData.type === 'admin') {
-            navigation.navigate('HomeScreen', { user: userData });
+            navigation.navigate('AdminHome', { user: userData });
           } else {
             navigation.navigate('EmployeeHomeScreen', { user: userData });
           }
@@ -59,37 +59,24 @@ const navigation = useNavigation();
     } catch (error) {
       console.error('Error during login:', error.message);
       alert('Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
-  };  
-
-
-  useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged(user => {
-    if (user) {
-    navigation.replace("Home")
-      }
-    })
-    return unsubscribe
-  }, []) 
-
-  
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-    >
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
           value={email}
-          onChangeText={text => setEmail(text)}
+          onChangeText={(text) => setEmail(text)}
           style={styles.input}
         />
         <TextInput
           placeholder="Password"
           value={password}
-          onChangeText={text => setPassword(text)}
+          onChangeText={(text) => setPassword(text)}
           style={styles.input}
           secureTextEntry
         />
@@ -98,20 +85,28 @@ const navigation = useNavigation();
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={handleLogin}
-          style={styles.button}
+          style={[styles.button, loading && styles.disabledButton]}
+          disabled={loading}
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleSignUp}
-          style={[styles.button, styles.buttonOutline]}
+          style={[styles.button, styles.buttonOutline, loading && styles.disabledButton]}
+          disabled={loading}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
       </View>
+
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </KeyboardAvoidingView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

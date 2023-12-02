@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { auth, firestore } from '../firebase'
 
-const HomeScreen = () => {
+const AdminHome = () => {
   const navigation = useNavigation()
 
   const handleAttendance = () => {
@@ -88,4 +88,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default HomeScreen
+export default AdminHome

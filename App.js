@@ -4,11 +4,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
 import CreateAccount from './screens/CreateAccount';
 import Attendance from './screens/Attendance';
 import ForgotPassword from './screens/ForgotPassword';
 import EmployeeHomeScreen from './screens/EmployeeHomeScreen';
+import AdminHome from './screens/AdminHome';
 
 
 const Stack = createNativeStackNavigator();
@@ -18,7 +18,7 @@ export default function App() {
     <NavigationContainer>
     <Stack.Navigator>
       <Stack.Screen options = {{ headerShown: false }} name="Login" component={LoginScreen} /> 
-      <Stack.Screen name="Home" component={HomeScreen} /> 
+      <Stack.Screen name="AdminHome" component={AdminHome} /> 
       <Stack.Screen name="CreateAccount" component={CreateAccount} /> 
       <Stack.Screen name="Attendance" component={Attendance} /> 
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} /> 
