@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { auth, dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -15,11 +15,12 @@ const CreateAccount = () => {
 
 
   const handleCreateAccount = async () => {
+    console.log('Starting handleCreateAccount');
     try {
       // Create a new user in Firebase Authentication
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       const newUser = userCredential.user;
-
+  
       // Save user details to Firestore
       const usersRef = collection(dbFirestore, 'users');
       const newUserDocRef = await addDoc(usersRef, {
@@ -31,18 +32,19 @@ const CreateAccount = () => {
         schedule,
         type,
       });
-
+  
       console.log('User registered successfully with ID:', newUserDocRef.id);
+      
       // Additional actions after successful registration
       Alert.alert('Account Created!', 'Your account has been created successfully.', [
         { text: 'OK', onPress: () => console.log('OK Pressed') },
       ]);
-
-
+  
     } catch (error) {
       console.error('Error creating account:', error.message);
       // Handle error (e.g., show an alert)
     }
+    console.log('Finished handleCreateAccount');
   };
 
   return (

@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { auth } from '../firebase'
 import { dbFirestore } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -25,27 +23,44 @@ const navigation = useNavigation();
   }
 
   
-  const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then(async (userCredentials) => {
-        const user = userCredentials.user;
-        // Fetch user data from Firestore to determine type
-        const userDoc = await dbFirestore.collection('users').doc(user.uid).get();
+  const handleLogin = async () => {
+    try {
+      const userCredentials = await auth.signInWithEmailAndPassword(email, password);
+      const user = userCredentials.user;
+  
+      // Fetch user data from Firestore to determine type
+      const usersCollectionRef = dbFirestore.collection('users');
+      
+      // Use where clause to find the document by user's UID
+      const userDocSnapshot = await usersCollectionRef.where('uid', '==', user.uid).get();
+  
+      if (!userDocSnapshot.empty) {
+        // If there are matching documents, get the first one
+        const userDoc = userDocSnapshot.docs[0];
         const userData = userDoc.data();
-
+  
+        console.log('User Data:', userData);
+  
         if (userData && userData.type) {
+          console.log('User Type:', userData.type);
+  
           if (userData.type === 'admin') {
             navigation.navigate('HomeScreen', { user: userData });
           } else {
             navigation.navigate('EmployeeHomeScreen', { user: userData });
           }
         } else {
-          console.error('User data not found or missing type');
+          console.error('User data exists, but type is missing or falsy.');
         }
-      })
-      .catch((error) => alert(error.message));   
-  };
+      } else {
+        console.error('User document does not exist in Firestore.');
+        alert('User data not found. Please register first.');
+      }
+    } catch (error) {
+      console.error('Error during login:', error.message);
+      alert('Login failed. Please check your credentials.');
+    }
+  };  
 
 
   useEffect(() => {
@@ -98,8 +113,6 @@ const navigation = useNavigation();
   )
 }
 
-export default LoginScreen
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -146,3 +159,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 })
+
+export default LoginScreen
