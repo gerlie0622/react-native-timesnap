@@ -30,3 +30,4 @@ const dbFirestore = app.firestore()
 
 
 export { auth, dbFirestore };
+export { firebase };

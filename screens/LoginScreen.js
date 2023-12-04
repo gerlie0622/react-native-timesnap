@@ -46,7 +46,7 @@ const handleForgotPassword = async () => {
           console.log('User Type:', userData.type);
 
           if (userData.type === 'admin') {
-            navigation.navigate('AdminHome', { user: userData });
+            navigation.navigate('HomeScreen2', { user: userData });
           } else {
             navigation.navigate('EmployeeHomeScreen', { user: userData });
           }
