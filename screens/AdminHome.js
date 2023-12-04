@@ -1,91 +1,116 @@
-import { useNavigation } from '@react-navigation/core'
-import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { auth, firestore } from '../firebase'
+// UserCount.js
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { dbFirestore } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
-const AdminHome = () => {
-  const navigation = useNavigation()
+const UserCount = () => {
+  const [userCount, setUserCount] = useState(0);
+  const [presentCount, setPresentCount] = useState(0);
+  const [absentCount, setAbsentCount] = useState(0);
 
-  const handleAttendance = () => {
-    navigation.navigate("Attendance")
-  };
+  useEffect(() => {
+    const fetchUserCounts = async () => {
+      try {
+        // Fetch the user collection from Firestore
+        const usersRef = collection(dbFirestore, 'users');
+        const usersSnapshot = await getDocs(usersRef);
 
-  const handleSchedule = () => {
-    console.log('Schedule button clicked');
-  };
-  const handleSalary = () => {
-    console.log('Salary button clicked');
-  };
+        // Set the total registered user count
+        setUserCount(usersSnapshot.size);
+      } catch (error) {
+        console.error('Error fetching user count:', error.message);
+      }
+    };
 
-  const handleCreateAccount = () => {
-      navigation.navigate("CreateAccount")
-    }
+    const fetchTimeEntries = async () => {
+      try {
+        // Fetch the timeEntries collection from Firestore
+        const timeEntriesRef = collection(dbFirestore, 'timeEntries');
+        const timeEntriesSnapshot = await getDocs(timeEntriesRef);
 
+        let presentCount = 0;
+        let absentCount = 0;
 
-    const handleForgotPassword = () => {
-      navigation.navigate("ForgotPassword")
-    }
+        // Use a set to keep track of users who missed "Time In" on a given day
+        const absentUsers = new Set();
 
-    const handleSignOut = () => {
-      auth
-        .signOut()
-        .then(() => {
-          navigation.replace("Login")
-        })
-        .catch(error => alert(error.message))
-    }
-  
-  
+        timeEntriesSnapshot.forEach((doc) => {
+          const eventType = doc.data().eventType;
+          const userEmail = doc.data().userEmail;
 
-return (
-  <View style={styles.container}>
-  <Text>Hi, {auth.currentUser?.email}</Text>
+          if (eventType === 'Time In') {
+            presentCount++;
+          } else if (eventType === 'Time Out' && !absentUsers.has(userEmail)) {
+            // Check if the user missed "Time In" on the same day
+            absentUsers.add(userEmail);
+            absentCount++;
+          }
+        });
 
-  <TouchableOpacity style={styles.button} onPress={handleAttendance}>
-        <Text style={styles.buttonText}>Attendance</Text>
-      </TouchableOpacity>
+        // Set the counts for presents and absents
+        setPresentCount(presentCount);
+        setAbsentCount(absentCount);
+      } catch (error) {
+        console.error('Error fetching time entries:', error);
+      }
+    };
 
-  <TouchableOpacity style={styles.button} onPress={handleSchedule}>
-        <Text style={styles.buttonText}>Schedule</Text>
-      </TouchableOpacity>
+    // Fetch user count and time entries when the component mounts
+    fetchUserCounts();
+    fetchTimeEntries();
+  }, []);
 
-  <TouchableOpacity style={styles.button} onPress={handleSalary}>
-        <Text style={styles.buttonText}>Salary</Text>
-      </TouchableOpacity>
-
-  <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
-        <Text style={styles.buttonText}>CreateAccount</Text>
-      </TouchableOpacity>
-      
-  <TouchableOpacity style={styles.button} onPress={handleForgotPassword}>
-        <Text style={styles.buttonText}>Forgot Password</Text>
-      </TouchableOpacity>
-
-
-  <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
+  return (
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <Text style={styles.cardText}>Total Number of Employees:</Text>
+        <Text style={styles.cardValue}>{userCount}</Text>
       </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardText}>Present Today:</Text>
+        <Text style={styles.cardValue}>{presentCount}</Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardText}>Absent Today:</Text>
+        <Text style={styles.cardValue}>{absentCount}</Text>
+      </View>
+    </View>
   );
-}
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  button: {
-    backgroundColor: '#0782F9',
-    width: '60%',
-    padding: 15,
+  card: {
+    backgroundColor: '#fff',
     borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    width: '100%',
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
+  cardText: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  cardValue: {
+    fontSize: 24,
+    color: '#0782F9', // or your preferred color
+    fontWeight: 'bold',
   },
 });
-export default AdminHome
+
+export default UserCount;

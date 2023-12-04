@@ -10,18 +10,19 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false); 
 
 const navigation = useNavigation();
-  const handleSignUp = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log('Registered with:', user.email);
-        setEmail('');
-        setPassword('');
-      })
-      .catch(error => alert(error.message))
-        
+
+const handleForgotPassword = async () => {
+  try {
+    setLoading(true);
+    await auth.sendPasswordResetEmail(email);
+    alert('Password reset email sent. Please check your email.');
+  } catch (error) {
+    console.error('Error during password reset:', error.message);
+    alert('Failed to send password reset email. Please try again.');
+  } finally {
+    setLoading(false);
   }
+};
 
   
   const handleLogin = async () => {
@@ -45,7 +46,7 @@ const navigation = useNavigation();
           console.log('User Type:', userData.type);
 
           if (userData.type === 'admin') {
-            navigation.navigate('AdminHome', { user: userData });
+            navigation.navigate('HomeScreen2', { user: userData });
           } else {
             navigation.navigate('EmployeeHomeScreen', { user: userData });
           }
@@ -91,11 +92,11 @@ const navigation = useNavigation();
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={handleSignUp}
+          onPress={handleForgotPassword} // Updated this line for "Forgot Password" feature
           style={[styles.button, styles.buttonOutline, loading && styles.disabledButton]}
           disabled={loading}
         >
-          <Text style={styles.buttonOutlineText}>Register</Text>
+          <Text style={styles.buttonOutlineText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
 

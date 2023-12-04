@@ -4,8 +4,10 @@ import { dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-const Attendance = () => {
+const Attendance = ( {} ) => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
+  const [checkInEnable, setCheckInEnable] = useState(true);
+  const [checkOutEnable, setCheckOutEnable] = useState(false);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -35,12 +37,16 @@ const Attendance = () => {
     console.log('Time In button pressed');
     const currentTime = new Date().toISOString();
     saveTimeToFirestore('Time In', currentTime);
+    setCheckInEnable(false)
+    setCheckOutEnable(true)
   };
 
   const handleTimeOut = () => {
     console.log('Time Out button pressed');
     const currentTime = new Date().toISOString();
     saveTimeToFirestore('Time Out', currentTime);
+    setCheckInEnable(false)
+    setCheckOutEnable(false)
   };
 
   const auth = getAuth();
@@ -76,15 +82,21 @@ const Attendance = () => {
       console.error('Error saving time:', error);
     }
   };  
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
       <Text style={styles.date}>{currentDateTime.date}</Text>
-      <TouchableOpacity title='Time In' onPress={handleTimeIn} style={styles.button}>
+
+      <TouchableOpacity title='Time In' onPress={handleTimeIn} disabled={!checkInEnable} style={{width: 200, height: 50, 
+        backgroundColor: checkInEnable ? 'blue' : 'gray', justifyContent: 'center', alignItems: 'center', alignSelf: 'center',
+        marginTop: 50, borderRadius: 10,}}>
         <Text style={styles.buttonText}>Time In</Text>
       </TouchableOpacity>
-      <TouchableOpacity title='Time Out' onPress={handleTimeOut} style={styles.button}>
+      
+      <TouchableOpacity title='Time Out' onPress={handleTimeOut} disabled={!checkOutEnable} style={{width: 200, height: 50, 
+        backgroundColor: checkOutEnable ? 'blue' : 'gray', justifyContent: 'center', alignItems: 'center', alignSelf: 'center',
+        marginTop: 50, borderRadius: 10,}}>
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
     </View>
