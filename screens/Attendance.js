@@ -3,20 +3,51 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Attendance = ( {} ) => {
+const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
-  const [checkInEnable, setCheckInEnable] = useState(true);
-  const [checkOutEnable, setCheckOutEnable] = useState(false);
+  const [isTimeInEnabled, setTimeInEnabled] = useState(true);
+  const [isTimeOutEnabled, setTimeOutEnabled] = useState(false);
+  const [timeInTimestamp, setTimeInTimestamp] = useState(null);
+  const [disabledTimeIn, setDisabledTimeIn] = useState(false);
+  const [disabledTimeOut, setDisabledTimeOut] = useState(true);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentDateTime(getCurrentDateTime());
+      const now = getCurrentDateTime();
+      setCurrentDateTime(now);
+
+      // Enable "Time In" button at 00:00:01
+      if (now.time === '00:00:01') {
+        setTimeInEnabled(true);
+        setTimeOutEnabled(false);
+        AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'true');
+        AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
+      }
     }, 1000);
 
-    // Clear the interval when the component is unmounted
-    return () => clearInterval(intervalId);
-  }, []);
+    // Load button states from AsyncStorage
+    const loadButtonStates = async () => {
+      const timeInEnabled = await AsyncStorage.getItem(`isTimeInEnabled_${userEmail}`);
+      const timeOutEnabled = await AsyncStorage.getItem(`isTimeOutEnabled_${userEmail}`);
+
+      if (timeInEnabled === 'false') {
+        setTimeInEnabled(false);
+      }
+
+      if (timeOutEnabled === 'true') {
+        setTimeOutEnabled(true);
+      }
+    };
+
+    loadButtonStates();
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [userEmail]);
 
   function getCurrentDateTime() {
     const now = new Date();
@@ -36,67 +67,87 @@ const Attendance = ( {} ) => {
   const handleTimeIn = () => {
     console.log('Time In button pressed');
     const currentTime = new Date().toISOString();
+    setTimeInTimestamp(currentTime); 
     saveTimeToFirestore('Time In', currentTime);
-    setCheckInEnable(false)
-    setCheckOutEnable(true)
+    setTimeInEnabled(false); 
+    setTimeOutEnabled(true); 
+    AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'false');
+    AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
+    setDisabledTimeIn(true);
+    setDisabledTimeOut(false);
   };
+  
 
   const handleTimeOut = () => {
     console.log('Time Out button pressed');
     const currentTime = new Date().toISOString();
     saveTimeToFirestore('Time Out', currentTime);
-    setCheckInEnable(false)
-    setCheckOutEnable(false)
+    setTimeOutEnabled(false); // Disable the "Time Out" button
+    AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
+    setDisabledTimeIn(true);
+    setDisabledTimeOut(true);
   };
 
   const auth = getAuth();
-  let userEmail = '';
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      userEmail = user.email;
+      setUserEmail(user.email);
     } else {
-      // User is not logged in
-      userEmail = ''; // Handle accordingly
+      setUserEmail('');
     }
   });
 
-  const saveTimeToFirestore = async (eventType) => {
+  const saveTimeToFirestore = async (eventType, currentTime) => {
     console.log('Saving time to Firestore...');
 
     try {
-      // Reference to the Firestore collection and document
-      const timeEntriesRef = collection(dbFirestore, "timeEntries");
-  
-      // Adding a document to the 'timeEntries' collection with auto-generated ID
+      const timeEntriesRef = collection(dbFirestore, 'timeEntries');
+
+      let duration = null;
+      if (eventType === 'Time Out' && timeInTimestamp) {
+        const timeInDate = new Date(timeInTimestamp);
+        const timeOutDate = new Date(currentTime);
+        const durationMilliseconds = timeOutDate - timeInDate;
+
+        const hours = Math.floor(durationMilliseconds / (1000 * 60 * 60));
+        const minutes = Math.floor((durationMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+        duration = `${hours}h ${minutes}m`;
+      }
+
       const autoIdDocRef = await addDoc(timeEntriesRef, {
         userEmail,
         eventType,
         timestamp: getCurrentDateTime().time,
         date: getCurrentDateTime().date,
+        duration,
       });
-      
-  
+
       console.log('Time saved successfully with ID:', autoIdDocRef.id);
     } catch (error) {
       console.error('Error saving time:', error);
     }
-  };  
-  
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
       <Text style={styles.date}>{currentDateTime.date}</Text>
-
-      <TouchableOpacity title='Time In' onPress={handleTimeIn} disabled={!checkInEnable} style={{width: 200, height: 50, 
-        backgroundColor: checkInEnable ? 'blue' : 'gray', justifyContent: 'center', alignItems: 'center', alignSelf: 'center',
-        marginTop: 50, borderRadius: 10,}}>
+      <TouchableOpacity
+        title="Time In"
+        onPress={handleTimeIn}
+        style={[styles.button, !isTimeInEnabled && styles.disabledButton]}
+        disabled={!isTimeInEnabled}
+      >
         <Text style={styles.buttonText}>Time In</Text>
       </TouchableOpacity>
-      
-      <TouchableOpacity title='Time Out' onPress={handleTimeOut} disabled={!checkOutEnable} style={{width: 200, height: 50, 
-        backgroundColor: checkOutEnable ? 'blue' : 'gray', justifyContent: 'center', alignItems: 'center', alignSelf: 'center',
-        marginTop: 50, borderRadius: 10,}}>
+      <TouchableOpacity
+        title="Time Out"
+        onPress={handleTimeOut}
+        style={[styles.button, !isTimeOutEnabled && styles.disabledButton]}
+        disabled={!isTimeOutEnabled}
+      >
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
     </View>
@@ -131,6 +182,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '700',
     fontSize: 16,
+  },
+  disabledButton: {
+    backgroundColor: '#a0a0a0', // Use a different color for the disabled state
   },
 });
 
