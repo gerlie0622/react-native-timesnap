@@ -11,6 +11,7 @@ import EmployeeHomeScreen from './screens/EmployeeHomeScreen';
 import AdminHome from './screens/AdminHome';
 import HomeScreen2 from './screens/HomeScreen2';
 import EmployeeList from './screens/EmployeeList';
+import SalaryAdmin from './screens/SalaryAdmin'
 
 
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,7 @@ export default function App() {
       <Stack.Screen name="EmployeeHomeScreen" component={EmployeeHomeScreen} /> 
       <Stack.Screen name="HomeScreen2" component={HomeScreen2} /> 
       <Stack.Screen name="EmployeeList" component={EmployeeList} /> 
+      <Stack.Screen name="SalaryAdmin" component={SalaryAdmin} />
     </Stack.Navigator>
   </NavigationContainer>
   );

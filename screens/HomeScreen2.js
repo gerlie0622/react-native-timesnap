@@ -13,8 +13,7 @@ const HomeScreen2 = () => {
     navigation.navigate("EmployeeList")
   };
   const handleSalary = () => {
-    // Add your salary logic here
-    console.log('Salary button clicked');
+    navigation.navigate("SalaryAdmin");
   };
   const handleCreateAccount = () => {
     
