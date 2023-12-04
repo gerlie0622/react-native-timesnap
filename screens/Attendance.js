@@ -67,15 +67,16 @@ const Attendance = () => {
   const handleTimeIn = () => {
     console.log('Time In button pressed');
     const currentTime = new Date().toISOString();
+    setTimeInTimestamp(currentTime); 
     saveTimeToFirestore('Time In', currentTime);
-    setTimeInEnabled(false); // Disable the "Time In" button
-    setTimeOutEnabled(true); // Enable the "Time Out" button
+    setTimeInEnabled(false); 
+    setTimeOutEnabled(true); 
     AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'false');
     AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
-    setTimeInTimestamp(currentTime);
     setDisabledTimeIn(true);
     setDisabledTimeOut(false);
   };
+  
 
   const handleTimeOut = () => {
     console.log('Time Out button pressed');
