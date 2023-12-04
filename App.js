@@ -12,7 +12,6 @@ import AdminHome from './screens/AdminHome';
 import HomeScreen2 from './screens/HomeScreen2';
 import EmployeeList from './screens/EmployeeList';
 import Camera from './screens/Camera';
-
 import SalaryAdmin from './screens/SalaryAdmin'
 import AllEmployees from './screens/AllEmployees'
 
@@ -21,18 +20,6 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen options = {{ headerShown: false }} name="Login" component={LoginScreen} /> 
-      <Stack.Screen name="AdminHome" component={AdminHome} /> 
-      <Stack.Screen name="CreateAccount" component={CreateAccount} /> 
-      <Stack.Screen name="Attendance" component={Attendance} /> 
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} /> 
-      <Stack.Screen name="EmployeeHomeScreen" component={EmployeeHomeScreen} /> 
-      <Stack.Screen name="HomeScreen2" component={HomeScreen2} /> 
-      <Stack.Screen name="EmployeeList" component={EmployeeList} /> 
-      <Stack.Screen name="Camera" component={Camera} /> 
-    </Stack.Navigator>
-  </NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen name="AdminHome" component={AdminHome} />
@@ -40,6 +27,7 @@ export default function App() {
         <Stack.Screen name="Attendance" component={Attendance} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="AllEmployees" component={AllEmployees} />
+        <Stack.Screen name="Camera" component={Camera} />
 
         <Stack.Screen
           name="EmployeeHomeScreen"
