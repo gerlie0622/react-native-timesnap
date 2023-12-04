@@ -12,6 +12,7 @@ import AdminHome from './screens/AdminHome';
 import HomeScreen2 from './screens/HomeScreen2';
 import EmployeeList from './screens/EmployeeList';
 import SalaryAdmin from './screens/SalaryAdmin'
+import AllEmployees from './screens/AllEmployees'
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,8 @@ export default function App() {
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Attendance" component={Attendance} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="AllEmployees" component={AllEmployees} />
+
         <Stack.Screen
           name="EmployeeHomeScreen"
           component={EmployeeHomeScreen}

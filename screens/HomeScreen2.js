@@ -12,6 +12,9 @@ const HomeScreen2 = () => {
   const handleEmployeeList = () => {
     navigation.navigate('EmployeeList');
   };
+  const handleAllEmployees = () => {
+    navigation.navigate('AllEmployees');
+  };
   const handleSalary = () => {
     navigation.navigate('SalaryAdmin');
   };
@@ -39,6 +42,9 @@ const HomeScreen2 = () => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleEmployeeList}>
         <Text style={styles.buttonText}>Attendance Status</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleAllEmployees}>
+        <Text style={styles.buttonText}>Employee List</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleSalary}>
         <Text style={styles.buttonText}>Salary</Text>
