@@ -15,40 +15,35 @@ const Attendance = () => {
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const checkMidnight = () => {
       const now = getCurrentDateTime();
-      setCurrentDateTime(now);
-
-      // Enable "Time In" button at 00:00:01
-      if (now.time === '00:00:01') {
+      if (now.time >= '00:00:00' && now.time < '00:00:01' && !isTimeInEnabled) {
+        // Enable "Time In" button after midnight
         setTimeInEnabled(true);
         setTimeOutEnabled(false);
         AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'true');
         AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
       }
-    }, 1000);
-
-    // Load button states from AsyncStorage
-    const loadButtonStates = async () => {
-      const timeInEnabled = await AsyncStorage.getItem(`isTimeInEnabled_${userEmail}`);
-      const timeOutEnabled = await AsyncStorage.getItem(`isTimeOutEnabled_${userEmail}`);
-
-      if (timeInEnabled === 'false') {
-        setTimeInEnabled(false);
+      if (now.time >= '00:00:00' && now.time < '00:00:01' && isTimeOutEnabled) {
+        // Disable "Time Out" button after midnight
+        setTimeOutEnabled(false);
+        AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
       }
-
-      if (timeOutEnabled === 'true') {
-        setTimeOutEnabled(true);
-      }
+  
+      // Schedule the next check for the next midnight
+      const nextMidnight = new Date(now.date + 'T00:00:01').getTime();
+      const timeUntilMidnight = nextMidnight - new Date().getTime();
+      setTimeout(checkMidnight, timeUntilMidnight);
     };
-
-    loadButtonStates();
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [userEmail]);
-
+  
+    // Initial check for midnight
+    checkMidnight();
+  
+    // Cleanup the timeout on component unmount
+    return () => clearTimeout(checkMidnight);
+  
+  }, [userEmail, isTimeInEnabled, isTimeOutEnabled]);
+  
   function getCurrentDateTime() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
