@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, Button } from 'react-native';
-import { Table, Row, Rows } from 'react-native-table-component';
+import { View, StyleSheet, TextInput, Button, ScrollView } from 'react-native';
+import { Table, Row, Rows } from 'react-native-reanimated-table';
 import { firebase } from '../firebase';
 
 const EmployeeList = () => {
@@ -9,15 +9,37 @@ const EmployeeList = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const todoRef = firebase.firestore().collection('timeEntries');
 
+  const usersRef = firebase.firestore().collection('users');
+
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const timeEntriesSnapshot = await todoRef.get();
+        const timeEntriesData = timeEntriesSnapshot.docs.map((doc) => doc.data());
+
+        const usersSnapshot = await usersRef.get();
+        const usersData = usersSnapshot.docs.reduce((acc, doc) => {
+          acc[doc.data().email] = doc.data().name;
+          return acc;
+        }, {});
+
+        const userList = timeEntriesData.map((entry) => [
+          entry.date,
+          usersData[entry.userEmail] || 'Unknown', 
+          entry.userEmail,
+          entry.eventType,
+          entry.timestamp,
+        ]);
+
+        setOriginalUsers(userList);
+        setFilteredUsers(userList);
+      } catch (error) {
+        console.error('Error fetching data:', error.message);
+      }
+    };
+
     const unsubscribe = todoRef.onSnapshot((querySnapshot) => {
-      const userList = [];
-      querySnapshot.forEach((doc) => {
-        const { date, userName, userEmail, eventType, timestamp } = doc.data();
-        userList.push([date, userName, userEmail, eventType, timestamp]);
-      });
-      setOriginalUsers(userList);
-      setFilteredUsers(userList);
+      fetchData();
     });
 
     return () => unsubscribe(); // Unsubscribe from the snapshot listener when component unmounts
@@ -36,7 +58,7 @@ const EmployeeList = () => {
   const tableHead = ['Date', 'Name', 'Email', 'TimeIn / TimeOut', 'Timestamp'];
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.filterContainer}>
         <TextInput
           style={styles.input}
@@ -51,7 +73,7 @@ const EmployeeList = () => {
         <Row data={tableHead} style={styles.head} textStyle={styles.text} />
         <Rows data={filteredUsers} textStyle={styles.text} />
       </Table>
-    </View>
+    </ScrollView>
   );
 };
 
