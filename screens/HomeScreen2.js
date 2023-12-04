@@ -43,8 +43,9 @@ const HomeScreen2 = () => {
       <TouchableOpacity style={styles.button} onPress={handleEmployeeList}>
         <Text style={styles.buttonText}>Attendance Status</Text>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={handleAllEmployees}>
-        <Text style={styles.buttonText}>Employee List</Text>
+        <Text style={styles.buttonText}>Employee Details</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleSalary}>
         <Text style={styles.buttonText}>Salary</Text>

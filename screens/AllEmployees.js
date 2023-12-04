@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput, Button, Alert } from 'react-native';
 import { Table, Row } from 'react-native-table-component';
 import { useNavigation } from '@react-navigation/native';
 import { firebase } from '../firebase';
 
 const AllEmployees = () => {
   const [users, setUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -45,6 +46,30 @@ const AllEmployees = () => {
     }
   };
 
+  const handleSearch = () => {
+    // Implement the logic to filter users based on the searchQuery
+    const filteredUsers = users.filter((user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setUsers(filteredUsers);
+  };
+
+  const handleReset = () => {
+    // Reset the search query and display the original list of users
+    setSearchQuery('');
+    const usersRef = firebase.firestore().collection('users');
+
+    usersRef.get().then((querySnapshot) => {
+      const userList = [];
+      querySnapshot.forEach((doc) => {
+        const { name, email, contactNumber, salary, schedule, uid } = doc.data();
+        userList.push({ name, email, contactNumber, salary, schedule, uid });
+      });
+
+      setUsers(userList);
+    });
+  };
+
   const renderActions = (uid) => (
     <View style={styles.actionsContainer}>
       <TouchableOpacity onPress={() => handleEdit(uid)}>
@@ -60,6 +85,16 @@ const AllEmployees = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search by name"
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
+        />
+        <Button title="Search" onPress={handleSearch} />
+        <Button title="Reset" onPress={handleReset} />
+      </View>
       <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
         <Row data={tableHead} style={[styles.head, styles.border]} textStyle={styles.text} />
         {users.map((user, index) => (
@@ -92,4 +127,7 @@ const styles = StyleSheet.create({
   actionsContainer: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
   editText: { color: 'blue', fontWeight: 'bold' },
   deleteText: { color: 'red', fontWeight: 'bold' },
+  searchContainer: { flexDirection: 'row', marginBottom: 10, alignItems: 'center' },
+  searchInput: { flex: 1, marginRight: 10, borderWidth: 1, padding: 8 },
+  buttonContainer: { width: 80, marginLeft: 10 },
 });
