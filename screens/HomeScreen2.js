@@ -1,64 +1,69 @@
-import { useNavigation } from '@react-navigation/core'
-import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { auth, firestore } from '../firebase'
+import { useNavigation } from '@react-navigation/core';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { auth } from '../firebase';
 
 const HomeScreen2 = () => {
-  const navigation = useNavigation()
- 
+  const navigation = useNavigation();
+
   const handleAttendance = () => {
-    navigation.navigate("AdminHome")
+    navigation.navigate('AdminHome');
   };
   const handleEmployeeList = () => {
-    navigation.navigate("EmployeeList")
+    navigation.navigate('EmployeeList');
+  };
+  const handleAllEmployees = () => {
+    navigation.navigate('AllEmployees');
   };
   const handleSalary = () => {
-    // Add your salary logic here
-    console.log('Salary button clicked');
+    navigation.navigate('SalaryAdmin');
   };
   const handleCreateAccount = () => {
+    navigation.navigate('CreateAccount');
+  };
+  const handleAboutUs = () => {
+    console.log('About Us button clicked');
+  };
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace('Login');
+      })
+      .catch((error) => alert(error.message));
+  };
+
+  return (
     
-      navigation.navigate("CreateAccount")
-    }
-    const handleAboutUs = () => {
-      // Add your about us logic here
-      console.log('About Us button clicked');
-    };
-    const handleSignOut = () => {
-      auth
-        .signOut()
-        .then(() => {
-          navigation.replace("Login")
-        })
-        .catch(error => alert(error.message))
-    }
-  
-  
-return (
-  <View style={styles.container}>
-  <Text>Hi, {auth.currentUser?.email}</Text>
-  <TouchableOpacity style={styles.button} onPress={handleAttendance}>
+    <View style={styles.container}>
+      <Text>Hi, {auth.currentUser?.email}</Text>
+      <TouchableOpacity style={styles.button} onPress={handleAttendance}>
         <Text style={styles.buttonText}>Attendance</Text>
       </TouchableOpacity>
-  <TouchableOpacity style={styles.button} onPress={handleEmployeeList}>
-        <Text style={styles.buttonText}>Employees</Text>
+      <TouchableOpacity style={styles.button} onPress={handleEmployeeList}>
+        <Text style={styles.buttonText}>Attendance Status</Text>
       </TouchableOpacity>
-  <TouchableOpacity style={styles.button} onPress={handleSalary}>
+
+      <TouchableOpacity style={styles.button} onPress={handleAllEmployees}>
+        <Text style={styles.buttonText}>Employee Details</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleSalary}>
         <Text style={styles.buttonText}>Salary</Text>
       </TouchableOpacity>
-  <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
+      <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>CreateAccount</Text>
       </TouchableOpacity>
-      
-  <TouchableOpacity style={styles.button} onPress={handleAboutUs}>
+      <TouchableOpacity style={styles.button} onPress={handleAboutUs}>
         <Text style={styles.buttonText}>About Us</Text>
       </TouchableOpacity>
-  <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
-      </View>
+      
+    </View>
   );
-}
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -79,4 +84,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default HomeScreen2
+
+export default HomeScreen2;
