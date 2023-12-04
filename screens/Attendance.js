@@ -9,6 +9,10 @@ const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
   const [isTimeInEnabled, setTimeInEnabled] = useState(true);
   const [isTimeOutEnabled, setTimeOutEnabled] = useState(false);
+  const [timeInTimestamp, setTimeInTimestamp] = useState(null);
+  const [disabledTimeIn, setDisabledTimeIn] = useState(false);
+  const [disabledTimeOut, setDisabledTimeOut] = useState(true);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -19,15 +23,15 @@ const Attendance = () => {
       if (now.time === '00:00:01') {
         setTimeInEnabled(true);
         setTimeOutEnabled(false);
-        AsyncStorage.setItem('isTimeInEnabled', 'true');
-        AsyncStorage.setItem('isTimeOutEnabled', 'false');
+        AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'true');
+        AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
       }
     }, 1000);
 
     // Load button states from AsyncStorage
     const loadButtonStates = async () => {
-      const timeInEnabled = await AsyncStorage.getItem('isTimeInEnabled');
-      const timeOutEnabled = await AsyncStorage.getItem('isTimeOutEnabled');
+      const timeInEnabled = await AsyncStorage.getItem(`isTimeInEnabled_${userEmail}`);
+      const timeOutEnabled = await AsyncStorage.getItem(`isTimeOutEnabled_${userEmail}`);
 
       if (timeInEnabled === 'false') {
         setTimeInEnabled(false);
@@ -43,7 +47,7 @@ const Attendance = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [userEmail]);
 
   function getCurrentDateTime() {
     const now = new Date();
@@ -66,8 +70,11 @@ const Attendance = () => {
     saveTimeToFirestore('Time In', currentTime);
     setTimeInEnabled(false); // Disable the "Time In" button
     setTimeOutEnabled(true); // Enable the "Time Out" button
-    AsyncStorage.setItem('isTimeInEnabled', 'false');
-    AsyncStorage.setItem('isTimeOutEnabled', 'true');
+    AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'false');
+    AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
+    setTimeInTimestamp(currentTime);
+    setDisabledTimeIn(true);
+    setDisabledTimeOut(false);
   };
 
   const handleTimeOut = () => {
@@ -75,17 +82,18 @@ const Attendance = () => {
     const currentTime = new Date().toISOString();
     saveTimeToFirestore('Time Out', currentTime);
     setTimeOutEnabled(false); // Disable the "Time Out" button
-    AsyncStorage.setItem('isTimeOutEnabled', 'false');
+    AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
+    setDisabledTimeIn(true);
+    setDisabledTimeOut(true);
   };
 
   const auth = getAuth();
-  let userEmail = '';
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      userEmail = user.email;
+      setUserEmail(user.email);
     } else {
-      userEmail = '';
+      setUserEmail('');
     }
   });
 
@@ -94,11 +102,25 @@ const Attendance = () => {
 
     try {
       const timeEntriesRef = collection(dbFirestore, 'timeEntries');
+
+      let duration = null;
+      if (eventType === 'Time Out' && timeInTimestamp) {
+        const timeInDate = new Date(timeInTimestamp);
+        const timeOutDate = new Date(currentTime);
+        const durationMilliseconds = timeOutDate - timeInDate;
+
+        const hours = Math.floor(durationMilliseconds / (1000 * 60 * 60));
+        const minutes = Math.floor((durationMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+        duration = `${hours}h ${minutes}m`;
+      }
+
       const autoIdDocRef = await addDoc(timeEntriesRef, {
         userEmail,
         eventType,
         timestamp: getCurrentDateTime().time,
         date: getCurrentDateTime().date,
+        duration,
       });
 
       console.log('Time saved successfully with ID:', autoIdDocRef.id);
@@ -161,7 +183,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   disabledButton: {
-    backgroundColor: '#a0a0a0', // Use a different color for disabled state
+    backgroundColor: '#a0a0a0', // Use a different color for the disabled state
   },
 });
 
