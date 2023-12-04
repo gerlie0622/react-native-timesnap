@@ -7,6 +7,7 @@ const EmployeeList = () => {
   const [originalUsers, setOriginalUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
+  const [searchName, setSearchName] = useState('');
   const todoRef = firebase.firestore().collection('timeEntries');
 
   const usersRef = firebase.firestore().collection('users');
@@ -42,16 +43,26 @@ const EmployeeList = () => {
       fetchData();
     });
 
-    return () => unsubscribe(); // Unsubscribe from the snapshot listener when component unmounts
+    return () => unsubscribe(); // Unsubscribe from the snapshot listener when the component unmounts
   }, []);
 
-  const filterDataByDate = () => {
-    const filteredData = originalUsers.filter((user) => user[0] === selectedDate);
+  const filterData = () => {
+    let filteredData = originalUsers;
+
+    if (searchName) {
+      filteredData = filteredData.filter((user) => user[1].toLowerCase().includes(searchName.toLowerCase()));
+    }
+
+    if (selectedDate) {
+      filteredData = filteredData.filter((user) => user[0] === selectedDate);
+    }
+
     setFilteredUsers(filteredData);
   };
 
   const resetFilter = () => {
     setSelectedDate('');
+    setSearchName('');
     setFilteredUsers(originalUsers);
   };
 
@@ -62,12 +73,20 @@ const EmployeeList = () => {
       <View style={styles.filterContainer}>
         <TextInput
           style={styles.input}
+          placeholder="Enter Name"
+          value={searchName}
+          onChangeText={(text) => setSearchName(text)}
+        />
+        <TextInput
+          style={styles.input}
           placeholder="Enter Date (YYYY-MM-DD)"
           value={selectedDate}
           onChangeText={(text) => setSelectedDate(text)}
         />
-        <Button title="Filter" onPress={filterDataByDate} />
-        <Button title="Reset" onPress={resetFilter} />
+        <View style={styles.buttonContainer}>
+          <Button title="Search" onPress={filterData} style={styles.button} />
+          <Button title="Reset" onPress={resetFilter} style={styles.button} />
+        </View>
       </View>
       <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
         <Row data={tableHead} style={styles.head} textStyle={styles.text} />
@@ -76,8 +95,6 @@ const EmployeeList = () => {
     </ScrollView>
   );
 };
-
-export default EmployeeList;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
@@ -96,4 +113,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 10,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginLeft: 5, // Adjust the margin as needed
+  },
+  button: {
+    flex: 1,
+    marginRight: 10, // Adjust the margin as needed
+  },
 });
+
+export default EmployeeList;

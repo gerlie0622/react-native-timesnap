@@ -38,7 +38,7 @@ const HomeScreen2 = () => {
         <Text style={styles.buttonText}>Attendance</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleEmployeeList}>
-        <Text style={styles.buttonText}>Employees</Text>
+        <Text style={styles.buttonText}>Attendance Status</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleSalary}>
         <Text style={styles.buttonText}>Salary</Text>
