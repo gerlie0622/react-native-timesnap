@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
+
 const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
   const [isTimeInEnabled, setTimeInEnabled] = useState(true);
@@ -69,17 +70,16 @@ const Attendance = () => {
   const handleTimeIn = () => {
     console.log('Time In button pressed');
     const currentTime = new Date().toISOString();
-    setTimeInTimestamp(currentTime); 
+    setTimeInTimestamp(currentTime);
     saveTimeToFirestore('Time In', currentTime);
-    setTimeInEnabled(false); 
-    setTimeOutEnabled(true); 
+    setTimeInEnabled(false);
+    setTimeOutEnabled(true);
     AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'false');
     AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
     setDisabledTimeIn(true);
     setDisabledTimeOut(false);
-    navigation.navigate('CameraTake');
   };
-  
+
 
   const handleTimeOut = () => {
     console.log('Time Out button pressed');
@@ -133,6 +133,9 @@ const Attendance = () => {
     }
   };
 
+      const handleCamera = () => {
+      navigation.navigate("Camera")
+      };
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
@@ -152,6 +155,10 @@ const Attendance = () => {
         disabled={!isTimeOutEnabled}
       >
         <Text style={styles.buttonText}>Time Out</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={handleCamera}>
+        <Text style={styles.buttonText}>Camera</Text>
       </TouchableOpacity>
     </View>
   );
