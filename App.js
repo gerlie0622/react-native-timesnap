@@ -8,10 +8,10 @@ import CreateAccount from './screens/CreateAccount';
 import Attendance from './screens/Attendance';
 import ForgotPassword from './screens/ForgotPassword';
 import EmployeeHomeScreen from './screens/EmployeeHomeScreen';
-import AdminHome from './screens/AdminHome';
+import UserCount from './screens/AdminHome';
 import HomeScreen2 from './screens/HomeScreen2';
 import EmployeeList from './screens/EmployeeList';
-import Camera from './screens/Camera';
+import CameraTake from './screens/Camera';
 import SalaryAdmin from './screens/SalaryAdmin'
 import AllEmployees from './screens/AllEmployees'
 
@@ -22,12 +22,12 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-        <Stack.Screen name="AdminHome" component={AdminHome} />
+        <Stack.Screen name="AdminHome" component={UserCount} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Attendance" component={Attendance} />
         <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="AllEmployees" component={AllEmployees} />
-        <Stack.Screen name="Camera" component={Camera} />
+        <Stack.Screen name="Camera" component={CameraTake} />
 
         <Stack.Screen
           name="EmployeeHomeScreen"
