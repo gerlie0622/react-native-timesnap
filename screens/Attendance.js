@@ -4,6 +4,7 @@ import { dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
@@ -13,6 +14,7 @@ const Attendance = () => {
   const [disabledTimeIn, setDisabledTimeIn] = useState(false);
   const [disabledTimeOut, setDisabledTimeOut] = useState(true);
   const [userEmail, setUserEmail] = useState('');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -75,6 +77,7 @@ const Attendance = () => {
     AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
     setDisabledTimeIn(true);
     setDisabledTimeOut(false);
+    navigation.navigate('CameraTake');
   };
   
 
