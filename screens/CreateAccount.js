@@ -32,8 +32,17 @@ const CreateAccount = () => {
         schedule,
         type,
       });
+
   
       console.log('User registered successfully with ID:', newUserDocRef.id);
+
+      setName('');
+      setEmail('');
+      setContactNumber('');
+      setSalary('620');
+      setSchedule('opening');
+      setPassword('');
+      setType('employee');
       
       // Additional actions after successful registration
       Alert.alert('Account Created!', 'Your account has been created successfully.', [
