@@ -105,7 +105,7 @@ const Attendance = () => {
     console.log('Saving time to Firestore...');
 
     try {
-      const timeEntriesRef = collection(dbFirestore, 'timeEntries');
+      const timeEntriesRef = collection(dbFirestore, 'timeEntriesDraft');
 
       let duration = null;
       if (eventType === 'Time Out' && timeInTimestamp) {
@@ -115,8 +115,8 @@ const Attendance = () => {
 
         const hours = Math.floor(durationMilliseconds / (1000 * 60 * 60));
         const minutes = Math.floor((durationMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
-
-        duration = `${hours}h ${minutes}m`;
+      
+        duration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
       }
 
       const autoIdDocRef = await addDoc(timeEntriesRef, {
