@@ -105,7 +105,7 @@ const Attendance = () => {
     console.log('Saving time to Firestore...');
 
     try {
-      const timeEntriesRef = collection(dbFirestore, 'timeEntriesDraft');
+      const timeEntriesRef = collection(dbFirestore, 'timeEntries');
 
       let duration = null;
       if (eventType === 'Time Out' && timeInTimestamp) {
