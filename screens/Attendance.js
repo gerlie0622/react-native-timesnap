@@ -78,6 +78,7 @@ const Attendance = () => {
     AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
     setDisabledTimeIn(true);
     setDisabledTimeOut(false);
+    handleCamera();
   };
 
 
@@ -136,6 +137,7 @@ const Attendance = () => {
       const handleCamera = () => {
       navigation.navigate("Camera")
       };
+
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
@@ -157,9 +159,6 @@ const Attendance = () => {
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleCamera}>
-        <Text style={styles.buttonText}>Camera</Text>
-      </TouchableOpacity>
     </View>
   );
 };
