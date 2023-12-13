@@ -6,19 +6,33 @@ import { Button } from 'react-native';
 import { storage } from '../firebase';
 import { getDownloadURL, uploadBytes, ref, deleteObject } from 'firebase/storage';
 import { Alert } from 'react-native';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const CameraTake = () => {
     const [image, setImage] = useState(null);
     const [isLoading, setisLoading] = useState(false);
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [hasPermission, setHasPermission] = useState(null);
+    const auth = getAuth();
+    const [user, setUser] = useState(null); // Make sure to initialize with an appropriate value
+
 
     useEffect(() => {
         (async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
-    }, []);
+
+        const fetchUser = async () => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    setUser(user);
+                }
+            });
+        };
+
+        fetchUser();
+    }, [auth]);
 
     if (hasPermission === null) {
         return <View />;
@@ -33,21 +47,27 @@ const CameraTake = () => {
     };
 
     const takePicture = async () => {
-        if (cameraRef) {
-            setImage(uploadURL);
-            setisLoading(true);
-            const photo = await cameraRef.takePictureAsync();
-            const uploadURL = await uploadImageAsync(photo.uri);
+        try {
+            if (cameraRef) {
+                setisLoading(true);
+                const photo = await cameraRef.takePictureAsync();
+                const uploadURL = await uploadImageAsync(photo.uri);
+                setImage(uploadURL);
+                setisLoading(false);
+                showImageTakenMessage();
+            }
+        } catch (error) {
+            console.error('Error taking picture:', error);
             setisLoading(false);
-            showImageTakenMessage();
+            // Handle error appropriately, e.g., show an error message to the user
         }
     };
-
+    
     const showImageTakenMessage = () => {
         if (window.alert) {
-            window.alert('The image was taken and sent.');
+            window.alert('Time In Recorded and your image was taken and sent.');
         } else {
-            console.log('The image was taken and sent.');
+            console.log('Time In Recorded and your image was taken and sent.');
         }
     };
 
@@ -81,6 +101,18 @@ const CameraTake = () => {
         } catch (error) {
             alert(`Error : ${error}`);
         }
+
+        const imageDetails = {
+            userEmail: user.email,
+            userName: user.displayName,
+            timestamp: Date.now(),
+        };
+
+        // Upload image and user details
+        await Promise.all([
+            uploadBytes(storageRef, blob),
+            addDoc(collection(dbFirestore, 'imageDetails'), imageDetails),
+        ]);
     }
 
     const deleteImage = async () => {
@@ -135,7 +167,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',  // Center the buttons horizontally
         marginBottom: 20,
-      },
+    },
     button: {
         paddingHorizontal: 20,
         paddingVertical: 10,
