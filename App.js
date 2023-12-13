@@ -12,8 +12,8 @@ import UserCount from './screens/AdminHome';
 import HomeScreen2 from './screens/HomeScreen2';
 import EmployeeList from './screens/EmployeeList';
 import CameraTake from './screens/Camera';
-import SalaryAdmin from './screens/SalaryAdmin'
-import AllEmployees from './screens/AllEmployees'
+import SalaryAdmin from './screens/SalaryAdmin';
+import AllEmployees from './screens/AllEmployees';
 
 const Stack = createNativeStackNavigator();
 
