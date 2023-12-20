@@ -7,6 +7,7 @@ import { storage } from '../firebase';
 import { getDownloadURL, uploadBytes, ref, deleteObject } from 'firebase/storage';
 import { Alert } from 'react-native';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 const CameraTake = () => {
     const [image, setImage] = useState(null);
@@ -15,6 +16,7 @@ const CameraTake = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const auth = getAuth();
     const [user, setUser] = useState(null); // Make sure to initialize with an appropriate value
+    const navigation = useNavigation(); // Initialize useNavigation
 
 
     useEffect(() => {
@@ -54,7 +56,6 @@ const CameraTake = () => {
                 const uploadURL = await uploadImageAsync(photo.uri);
                 setImage(uploadURL);
                 setisLoading(false);
-                showImageTakenMessage();
             }
         } catch (error) {
             console.error('Error taking picture:', error);
@@ -63,14 +64,6 @@ const CameraTake = () => {
         }
     };
     
-    const showImageTakenMessage = () => {
-        if (window.alert) {
-            window.alert('Time In Recorded and your image was taken and sent.');
-        } else {
-            console.log('Time In Recorded and your image was taken and sent.');
-        }
-    };
-
     let cameraRef;
 
     const uploadImageAsync = async (uri) => {
@@ -126,25 +119,37 @@ const CameraTake = () => {
             alert(`Error : ${error}`);
         }
     }
+
+    const handleConfirm = () => {
+        // Navigate back to the original screen
+        navigation.navigate('Attendance'); // Replace 'Attendance' with the actual screen name
+    };
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.cameraContainer}>
                 <Camera style={styles.camera} type={type} ref={(ref) => (cameraRef = ref)}>
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+                        <TouchableOpacity style={styles.flipButton} onPress={toggleCameraType}>
                             <Text style={styles.text}>Flip Camera</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={takePicture}>
-                            <Text style={styles.text}>Take Picture</Text>
+                    </View>
+                    <View style={styles.takePictureContainer}>
+                        <TouchableOpacity style={styles.takePictureButton} onPress={takePicture}>
+                            <Text style={styles.takePictureButtonText}>Take Picture</Text>
                         </TouchableOpacity>
                     </View>
                 </Camera>
                 {image && (
                     <View style={styles.imageContainer}>
                         <Image source={{ uri: image }} style={styles.image} />
-                        <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}>
-                            <Text style={styles.deleteButtonText}>Delete This Image</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonRow}>
+                            <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}>
+                                <Text style={styles.deleteButtonText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+                                <Text style={styles.confirmButtonText}>Confirm</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
             </View>
@@ -158,43 +163,74 @@ const styles = StyleSheet.create({
     },
     cameraContainer: {
         flex: 1,
-        flexDirection: 'column', // Adjust layout to have camera and image in the same container
+        flexDirection: 'column',
     },
     camera: {
         flex: 1,
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',  // Center the buttons horizontally
-        marginBottom: 20,
-    },
-    button: {
+        justifyContent: 'space-between',
+        alignItems: 'flex-start', // Align items at the top
         paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 5,
+        paddingTop: 20, // Add top padding
+    },
+    takePictureContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    flipButton: {
         backgroundColor: '#007bff',
-        marginHorizontal: 10,
+        borderRadius: 50, // Make it a circle
+        padding: 20,
+        alignItems: 'center',
+    },
+    takePictureButton: {
+        backgroundColor: '#007bff',
+        borderRadius: 50, // Make it a circle
+        padding: 20,
+        alignItems: 'center',
+    },
+    takePictureButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
     text: {
         color: 'white',
         fontWeight: 'bold',
     },
     imageContainer: {
-        flex: 1,
-        justifyContent: 'flex-end', // Move the image and delete button to the bottom
+        flex: 1000,
+        justifyContent: 'flex-end',
     },
     image: {
         flex: 1,
         resizeMode: 'cover',
     },
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        margin: 10,
+    },
     deleteButton: {
         backgroundColor: 'red',
-        padding: 15,
+        padding: 5,
         borderRadius: 5,
         alignItems: 'center',
-        margin: 10, // Add some margin to the delete button
     },
     deleteButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    confirmButton: {
+        backgroundColor: 'green',
+        padding: 5,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    confirmButtonText: {
         color: 'white',
         fontWeight: 'bold',
     },
