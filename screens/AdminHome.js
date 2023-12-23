@@ -1,8 +1,8 @@
-// UserCount.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { dbFirestore } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
+
 
 const UserCount = () => {
   const [userCount, setUserCount] = useState(0);
@@ -37,7 +37,7 @@ const UserCount = () => {
 
         timeEntriesSnapshot.forEach((doc) => {
           const eventType = doc.data().eventType;
-          const userEmail = doc.data().userEmail;
+          const userEmail = doc.data().email;
 
           if (eventType === 'Time In') {
             presentCount++;

@@ -136,10 +136,17 @@ const Attendance = () => {
       const handleCamera = () => {
       navigation.navigate("Camera")
       };
+
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
       <Text style={styles.date}>{currentDateTime.date}</Text>
+      <TouchableOpacity
+        onPress={handleCamera}
+        style={[styles.button]}
+      >
+        <Text style={styles.buttonText}>Take a Selfie!</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         title="Time In"
         onPress={handleTimeIn}
@@ -157,9 +164,6 @@ const Attendance = () => {
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleCamera}>
-        <Text style={styles.buttonText}>Camera</Text>
-      </TouchableOpacity>
     </View>
   );
 };
