@@ -12,43 +12,49 @@ import UserCount from './screens/AdminHome';
 import HomeScreen2 from './screens/HomeScreen2';
 import EmployeeList from './screens/EmployeeList';
 import CameraTake from './screens/Camera';
-import SalaryAdmin from './screens/SalaryAdmin'
-import AllEmployees from './screens/AllEmployees'
+import SalaryAdmin from './screens/SalaryAdmin';
+import AllEmployees from './screens/AllEmployees';
+import EditUser from './screens/EditUser';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-        <Stack.Screen name="AdminHome" component={UserCount} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
-        <Stack.Screen name="Attendance" component={Attendance} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        <Stack.Screen name="AllEmployees" component={AllEmployees} />
-        <Stack.Screen name="Camera" component={CameraTake} />
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+          <Stack.Screen name="AdminHome" component={UserCount} />
+          <Stack.Screen name="CreateAccount" component={CreateAccount} />
+          <Stack.Screen name="Attendance" component={Attendance} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="AllEmployees" component= { AllEmployees} />
+          <Stack.Screen name="Camera" component={CameraTake} />
+          <Stack.Screen name="EditUser" component={EditUser} />
+          
 
-        <Stack.Screen
-          name="EmployeeHomeScreen"
-          component={EmployeeHomeScreen}
-          options={({ navigation }) => ({
-            title: 'Employee Home',
-            headerLeft: () => null, // Hide the back arrow button for EmployeeHomeScreen
-          })}
-        />
-        <Stack.Screen
-          name="HomeScreen2"
-          component={HomeScreen2}
-          options={({ navigation }) => ({
-            title: 'HomeScreen',
-            headerLeft: () => null, // Hide the back arrow button for HomeScreen2
-          })}
-        />
-        <Stack.Screen name="EmployeeList" component={EmployeeList} />
-        <Stack.Screen name="SalaryAdmin" component={SalaryAdmin} />
-      </Stack.Navigator>
-    </NavigationContainer>
+
+          <Stack.Screen
+            name="EmployeeHomeScreen"
+            component={EmployeeHomeScreen}
+            options={({ navigation }) => ({
+              title: 'Employee Home',
+              headerLeft: () => null, 
+            })}
+          />
+          <Stack.Screen
+            name="HomeScreen2"
+            component={HomeScreen2}
+            options={({ navigation }) => ({
+              title: 'HomeScreen',
+              headerLeft: () => null, 
+            })}
+          />
+          <Stack.Screen name="EmployeeList" component={EmployeeList} />
+          <Stack.Screen name="SalaryAdmin" component={SalaryAdmin} />
+        </Stack.Navigator>
+      </NavigationContainer>
+   
   );
 }
 

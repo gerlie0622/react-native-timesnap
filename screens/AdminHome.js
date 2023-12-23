@@ -64,17 +64,17 @@ const UserCount = () => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.cardText}>Total Number of Employees:</Text>
+        <Text style={styles.cardLabel}>Total Number of Employees:</Text>
         <Text style={styles.cardValue}>{userCount}</Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardText}>Present Today:</Text>
+        <Text style={styles.cardLabel}>Present Today:</Text>
         <Text style={styles.cardValue}>{presentCount}</Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardText}>Absent Today:</Text>
+        <Text style={styles.cardLabel}>Absent Today:</Text>
         <Text style={styles.cardValue}>{absentCount}</Text>
       </View>
     </View>
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     width: '100%',
   },
-  cardText: {
+  cardLabel: {
     fontSize: 18,
     marginBottom: 10,
     color: '#333',
