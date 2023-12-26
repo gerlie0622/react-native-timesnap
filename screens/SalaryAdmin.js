@@ -32,6 +32,7 @@ const SalaryAdmin = () => {
           entry.eventType,
           entry.timestamp,
           entry.duration,
+          calculateSalary(entry.duration), // Added Salary column
         ]);
 
         setOriginalUsers(userList);
@@ -47,6 +48,13 @@ const SalaryAdmin = () => {
 
     return () => unsubscribe(); // Unsubscribe from the snapshot listener when the component unmounts
   }, []);
+
+  const calculateSalary = (duration) => {
+    const hours = parseFloat(duration); // Assuming the duration is in hours
+    const hourlyRate = 77.5;
+    const salary = isNaN(hours) ? 0 : hours * hourlyRate;
+    return salary.toFixed(2); // Format to two decimal places
+  };
 
   const filterData = () => {
     let filteredData = originalUsers;
@@ -77,7 +85,7 @@ const SalaryAdmin = () => {
     setFilteredUsers(originalUsers);
   };
 
-  const tableHead = ['Date', 'Name', 'Email', 'TimeIn / TimeOut', 'Timestamp', 'Duration'];
+  const tableHead = ['Date', 'Name', 'Email', 'TimeIn / TimeOut', 'Timestamp', 'Duration', 'Salary']; // Added 'Salary' column
 
   return (
     <ScrollView style={styles.container}>
