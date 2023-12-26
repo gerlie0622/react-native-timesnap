@@ -7,7 +7,7 @@ const EmployeeHomeScreen = () => {
   const navigation = useNavigation()
 
   const handleAttendance = () => {
-    navigation.navigate("Attendance")
+    navigation.navigate("Camera")
   };
 
 

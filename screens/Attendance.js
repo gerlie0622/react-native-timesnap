@@ -91,6 +91,27 @@ const Attendance = () => {
     setDisabledTimeOut(true);
   };
 
+  const enableButtons = () => {
+    // Enable both "Time In" and "Time Out" buttons
+    setTimeInEnabled((prev) => {
+      if (!prev) {
+        AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'true');
+        setDisabledTimeIn(false);
+      }
+      return true;
+    });
+
+    setTimeOutEnabled((prev) => {
+      if (!prev) {
+        AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
+        setDisabledTimeOut(false);
+      }
+      return true;
+    });
+  };
+
+
+
   const auth = getAuth();
 
   onAuthStateChanged(auth, (user) => {
@@ -136,17 +157,10 @@ const Attendance = () => {
       const handleCamera = () => {
       navigation.navigate("Camera")
       };
-
   return (
     <View style={styles.container}>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
       <Text style={styles.date}>{currentDateTime.date}</Text>
-      <TouchableOpacity
-        onPress={handleCamera}
-        style={[styles.button]}
-      >
-        <Text style={styles.buttonText}>Take a Selfie!</Text>
-      </TouchableOpacity>
       <TouchableOpacity
         title="Time In"
         onPress={handleTimeIn}
@@ -163,6 +177,19 @@ const Attendance = () => {
       >
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={handleCamera}>
+        <Text style={styles.buttonText}>Camera</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        title="Enable Buttons"
+        onPress={enableButtons}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Activate</Text>
+      </TouchableOpacity>
+
 
     </View>
   );
