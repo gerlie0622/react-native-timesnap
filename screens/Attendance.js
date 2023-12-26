@@ -5,7 +5,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome
 
 const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
@@ -22,7 +22,6 @@ const Attendance = () => {
       const now = getCurrentDateTime();
       setCurrentDateTime(now);
 
-      // Enable "Time In" button at 00:00:01
       if (now.time === '00:00:01') {
         setTimeInEnabled(true);
         setTimeOutEnabled(false);
@@ -31,7 +30,6 @@ const Attendance = () => {
       }
     }, 1000);
 
-    // Load button states from AsyncStorage
     const loadButtonStates = async () => {
       const timeInEnabled = await AsyncStorage.getItem(`isTimeInEnabled_${userEmail}`);
       const timeOutEnabled = await AsyncStorage.getItem(`isTimeOutEnabled_${userEmail}`);
@@ -80,19 +78,17 @@ const Attendance = () => {
     setDisabledTimeOut(false);
   };
 
-
   const handleTimeOut = () => {
     console.log('Time Out button pressed');
     const currentTime = new Date().toISOString();
     saveTimeToFirestore('Time Out', currentTime);
-    setTimeOutEnabled(false); // Disable the "Time Out" button
+    setTimeOutEnabled(false);
     AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
     setDisabledTimeIn(true);
     setDisabledTimeOut(true);
   };
 
   const enableButtons = () => {
-    // Enable both "Time In" and "Time Out" buttons
     setTimeInEnabled((prev) => {
       if (!prev) {
         AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'true');
@@ -109,8 +105,6 @@ const Attendance = () => {
       return true;
     });
   };
-
-
 
   const auth = getAuth();
 
@@ -136,7 +130,7 @@ const Attendance = () => {
 
         const hours = Math.floor(durationMilliseconds / (1000 * 60 * 60));
         const minutes = Math.floor((durationMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
-      
+
         duration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
       }
 
@@ -154,11 +148,19 @@ const Attendance = () => {
     }
   };
 
-      const handleCamera = () => {
-      navigation.navigate("Camera")
-      };
+  const handleCamera = () => {
+    navigation.navigate('Camera');
+  };
+
+  const goToHomeScreen = () => {
+    navigation.navigate('EmployeeHomeScreen'); // Replace 'EmployeeHomeScreen' with the actual screen name
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.iconButton} onPress={goToHomeScreen}>
+        <Icon name="home" size={30} color="white" />
+      </TouchableOpacity>
       <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
       <Text style={styles.date}>{currentDateTime.date}</Text>
       <TouchableOpacity
@@ -177,20 +179,12 @@ const Attendance = () => {
       >
         <Text style={styles.buttonText}>Time Out</Text>
       </TouchableOpacity>
-
       <TouchableOpacity style={styles.button} onPress={handleCamera}>
         <Text style={styles.buttonText}>Camera</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity
-        title="Enable Buttons"
-        onPress={enableButtons}
-        style={styles.button}
-      >
+      <TouchableOpacity title="Enable Buttons" onPress={enableButtons} style={styles.button}>
         <Text style={styles.buttonText}>Activate</Text>
       </TouchableOpacity>
-
-
     </View>
   );
 };
@@ -226,6 +220,14 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: '#a0a0a0', // Use a different color for the disabled state
+  },
+  iconButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#0782F9',
   },
 });
 
