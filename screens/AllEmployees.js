@@ -82,16 +82,16 @@ const AllEmployees = () => {
         style={[styles.actionButton, styles.editButton]} // Apply styles for the Edit button
         onPress={() => handleEdit(user)}
       >
-        <Text style={styles.editText}>Edit</Text>
+        <Text style={styles.editButtonText}>Edit</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.actionButton, styles.deleteButton]} // Apply styles for the Delete button
         onPress={() => handleDelete(user.uid)}
       >
-        <Text style={styles.deleteText}>Delete</Text>
+        <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
     </View>
-  );
+  );  
 
   const tableHead = ['Name', 'Email', 'Contact Number', 'Salary', 'Schedule', 'Actions'];
 
@@ -137,16 +137,20 @@ const AllEmployees = () => {
   );
 };
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F5F5F5' }, // Light gray background color for the container
+  container: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: '#F5F5F5',
+  },
   searchContainer: {
     flexDirection: 'row',
     marginBottom: 10,
     alignItems: 'center',
-    backgroundColor: '#3498DB', // Formal blue color for the search container
+    backgroundColor: '#3498DB',
     borderRadius: 10,
     padding: 8,
   },
-
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -161,9 +165,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  searchInput: { flex: 1, marginRight: 10, padding: 8, fontSize: 14, backgroundColor: '#FFF', borderRadius: 8 }, // White background color for the text input with rounded corners
-  buttonContainer: { width: 80 },
+  searchInput: {
+    flex: 1,
+    marginRight: 10,
+    padding: 8,
+    fontSize: 14,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+  },
+  buttonContainer: {
+    width: 80,
+  },
   card: {
     backgroundColor: '#FFF',
     borderRadius: 10,
@@ -175,27 +187,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
-  cardText: { fontSize: 18, color: '#333', fontWeight: 'bold', marginBottom: 8 },
-  cardDetail: { fontSize: 14, color: '#555', marginBottom: 4 },
-  actionsContainer: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
-  editText: { color: '#3498DB', fontWeight: 'bold' }, // Formal blue color for the edit text
-  deleteText: { color: '#E74C3C', fontWeight: 'bold' }, // Red color for the delete text
-
-  searchContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-    alignItems: 'center',
-    borderColor: '#3498DB', // Blue outline color for the search container
-    borderWidth: 3,
-    borderRadius: 10,
-    padding: 8,
+  cardText: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
-  searchInput: {
-    flex: 1,
-    marginRight: 10,
-    padding: 8,
+  cardDetail: {
     fontSize: 14,
-    color: '#333', // Text color
+    color: '#555',
+    marginBottom: 4,
   },
   searchButton: {
     width: 40,
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     width: 80,
-    backgroundColor: '#E74C3C', // Red color for the reset button background
+    backgroundColor: '#E74C3C',
     borderRadius: 8,
     marginLeft: 10,
     paddingVertical: 8,
@@ -216,32 +217,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   resetButtonText: {
-    color: '#FFF', // White text color for the reset button
+    color: '#FFF',
     fontWeight: 'bold',
   },
-
   editButton: {
-    backgroundColor: '#3498DB', // Blue color for the Edit button background
-    marginRight: 8, // Added margin to separate Edit and Delete buttons
-    borderColor: '#3498DB', // Blue color for the Edit button border
-    borderWidth: 1, // Added border line to the Edit button
+    backgroundColor: '#3498DB',
+    marginRight: 8,
+    borderColor: '#3498DB',
+    borderWidth: 1,
   },
   deleteButton: {
-    backgroundColor: '#E74C3C', // Red color for the Delete button background
-    marginLeft: 8, // Added margin to separate Edit and Delete buttons
-    borderColor: '#E74C3C', // Red color for the Delete button border
-    borderWidth: 1, // Added border line to the Delete button
+    backgroundColor: '#E74C3C',
+    marginLeft: 8,
+    borderColor: '#E74C3C',
+    borderWidth: 1,
   },
-  editText: {
-    color: '#FFF', // White text color for the Edit button
+  editButtonText: {
+    color: '#FFF',
     fontWeight: 'bold',
   },
-  deleteText: {
-    color: '#FFF', // White text color for the Delete button
-    fontWeight: 'bold',
+  deleteButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',  
   },
-
 });
-
 
 export default AllEmployees;
