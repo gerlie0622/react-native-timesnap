@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { dbFirestore } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -8,6 +8,12 @@ const UserCount = () => {
   const [userCount, setUserCount] = useState(0);
   const [presentCount, setPresentCount] = useState(0);
   const [absentCount, setAbsentCount] = useState(0);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Hide the header
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const fetchUserCounts = async () => {
@@ -86,7 +92,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    backgroundColor:'#1A8FE3',
   },
   card: {
     backgroundColor: '#fff',

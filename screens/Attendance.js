@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -17,6 +17,12 @@ const Attendance = () => {
   const [disabledTimeOut, setDisabledTimeOut] = useState(true);
   const [userEmail, setUserEmail] = useState('');
   const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Hide the header
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -186,8 +192,8 @@ const Attendance = () => {
       <TouchableOpacity style={styles.iconButton} onPress={goToHomeScreen}>
         <Icon name="home" size={30} color="white" />
       </TouchableOpacity>
-      <Text style={styles.digitalClock}>{currentDateTime.time}</Text>
-      <Text style={styles.date}>{currentDateTime.date}</Text>
+      <Text style={styles.textStylee}>{currentDateTime.time}</Text>
+      <Text style={styles.textStyle}>{currentDateTime.date}</Text>
       <TouchableOpacity
         title="Time In"
         onPress={handleTimeIn}
@@ -219,24 +225,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:'#1A8FE3',
   },
-  digitalClock: {
-    fontSize: 40,
-    fontWeight: 'bold',
+
+  textStyle: {
+    fontSize:25,
+    padding:10,
+    color:'#fff',
+    marginBottom:50,
   },
-  date: {
-    fontSize: 20,
-    marginTop: 20,
-    marginBottom: 50,
-    color: 'gray',
+  textStylee: {
+    fontSize:25,
+    padding:10,
+    color:'#fff',
   },
   button: {
-    backgroundColor: '#0782F9',
+    backgroundColor: '#F17105',
     width: '60%',
-    padding: 15,
+    padding: 8,
     borderRadius: 10,
+    marginBottom: 10,
     alignItems: 'center',
-    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#EAE0C8',
+    
   },
   buttonText: {
     color: 'white',
@@ -252,7 +264,7 @@ const styles = StyleSheet.create({
     right: 20,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: '#0782F9',
+    backgroundColor: '#F2D0A4',
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
@@ -17,6 +17,12 @@ const CameraTake = () => {
     const auth = getAuth();
     const [user, setUser] = useState(null); // Make sure to initialize with an appropriate value
     const navigation = useNavigation(); // Initialize useNavigation
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+          headerShown: false, // Hide the header
+        });
+      }, [navigation]);
 
 
     useEffect(() => {
@@ -125,7 +131,7 @@ const CameraTake = () => {
         navigation.navigate('Attendance'); // Replace 'Attendance' with the actual screen name
     };
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={{ ...styles.container, paddingTop: 0 }}>
             <View style={styles.cameraContainer}>
                 <Camera style={styles.camera} type={type} ref={(ref) => (cameraRef = ref)}>
                     <View style={styles.buttonContainer}>
@@ -160,6 +166,8 @@ const CameraTake = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor:'#1A8FE3',
+        paddingTop:0,
     },
     cameraContainer: {
         flex: 1,
@@ -181,16 +189,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     flipButton: {
-        backgroundColor: '#007bff',
-        borderRadius: 50, // Make it a circle
-        padding: 20,
+        backgroundColor: '#F17105',
+        width: '40%',
+        padding: 8,
+        borderRadius: 10,
         alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#EAE0C8',
     },
     takePictureButton: {
-        backgroundColor: '#007bff',
         borderRadius: 50, // Make it a circle
         padding: 20,
+        backgroundColor: '#F17105',
+        width: '50%',
         alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#EAE0C8',
     },
     takePictureButtonText: {
         color: 'white',

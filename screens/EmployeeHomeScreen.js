@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/core'
-import React from 'react'
+import React, { useLayoutEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { auth, firestore } from '../firebase'
 
@@ -23,12 +23,17 @@ const EmployeeHomeScreen = () => {
         })
         .catch(error => alert(error.message))
     }
-  
+
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerShown: false, // Hide the header
+      });
+    }, [navigation]);
   
 
 return (
   <View style={styles.container}>
-  <Text>Hi, {auth.currentUser?.email}</Text>
+  <Text style={styles.textStyle}>Hi, {auth.currentUser?.email}</Text>
 
   <TouchableOpacity style={styles.button} onPress={handleAttendance}>
         <Text style={styles.buttonText}>Attendance</Text>
@@ -50,14 +55,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:'#1A8FE3',
   },
+
+  textStyle: {
+
+    padding:50,
+    color:'#fff',
+
+  },
+
   button: {
-    backgroundColor: '#0782F9',
+    backgroundColor: '#F17105',
     width: '60%',
-    padding: 15,
+    padding: 8,
     borderRadius: 10,
+    marginBottom: 20,
     alignItems: 'center',
-    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#EAE0C8',
+    
   },
   buttonText: {
     color: 'white',
