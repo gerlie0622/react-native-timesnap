@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome
+import { Alert } from 'react-native';
 
 const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
@@ -66,26 +67,50 @@ const Attendance = () => {
   }
 
   const handleTimeIn = () => {
-    console.log('Time In button pressed');
     const currentTime = new Date().toISOString();
-    setTimeInTimestamp(currentTime);
-    saveTimeToFirestore('Time In', currentTime);
-    setTimeInEnabled(false);
-    setTimeOutEnabled(true);
-    AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'false');
-    AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
-    setDisabledTimeIn(true);
-    setDisabledTimeOut(false);
+    const confirmationMessage = `The time right now is ${currentDateTime.time}. Are you sure you want to time in?`;
+
+    Alert.alert('Confirmation', confirmationMessage, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          setTimeInTimestamp(currentTime);
+          saveTimeToFirestore('Time In', currentTime);
+          setTimeInEnabled(false);
+          setTimeOutEnabled(true);
+          AsyncStorage.setItem(`isTimeInEnabled_${userEmail}`, 'false');
+          AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'true');
+          setDisabledTimeIn(true);
+          setDisabledTimeOut(false);
+        },
+      },
+    ]);
   };
 
   const handleTimeOut = () => {
-    console.log('Time Out button pressed');
     const currentTime = new Date().toISOString();
-    saveTimeToFirestore('Time Out', currentTime);
-    setTimeOutEnabled(false);
-    AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
-    setDisabledTimeIn(true);
-    setDisabledTimeOut(true);
+    const confirmationMessage = `The time right now is ${currentDateTime.time}. Are you sure you want to time out?`;
+
+    Alert.alert('Confirmation', confirmationMessage, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          saveTimeToFirestore('Time Out', currentTime);
+          setTimeOutEnabled(false);
+          AsyncStorage.setItem(`isTimeOutEnabled_${userEmail}`, 'false');
+          setDisabledTimeIn(true);
+          setDisabledTimeOut(true);
+        },
+      },
+    ]);
   };
 
   const enableButtons = () => {
