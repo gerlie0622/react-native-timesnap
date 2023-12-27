@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
@@ -15,12 +15,27 @@ import CameraTake from './screens/Camera';
 import SalaryAdmin from './screens/SalaryAdmin';
 import AllEmployees from './screens/AllEmployees';
 import EditUser from './screens/EditUser';
+import SplashScreen from 'react-native-splash-screen'
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  const [isSplashVisible, setSplashVisible] = useState(true);
+
+  useEffect(() => {
+    // Simulate a delay (e.g., 2 seconds) before hiding the splash screen
+    const delay = setTimeout(() => {
+      setSplashVisible(false);
+    }, 2000);
+
+    // Clear the timeout when the component is unmounted
+    return () => clearTimeout(delay);
+  }, []);
+
   return (
+
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
