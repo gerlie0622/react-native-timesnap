@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
 import { auth } from '../firebase'
 import { dbFirestore } from '../firebase';
+import styles from '../styles';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -109,59 +110,5 @@ const handleForgotPassword = async () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:'#1A8FE3',
-  },
-  inputContainer: {
-    width: '80%',
-  },
-  input: {
-    backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    borderColor: '#EAE0C8',
-    borderWidth: 2,
-  },
-  buttonContainer: {
-    width: '60%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 40,
-  },
-  button: {
-    backgroundColor: '#F17105',
-    width: '100%',
-    padding: 8,
-    borderRadius: 10,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#EAE0C8',
-    
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-
-  buttonOutline: {
-    backgroundColor: 'white',
-    marginTop: 5,
-    borderColor: '#EAE0C8',
-    borderWidth: 2,
-  },
-  
-  buttonOutlineText: {
-    color: '#F17105',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-})
 
 export default LoginScreen

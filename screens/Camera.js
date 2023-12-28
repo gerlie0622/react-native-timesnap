@@ -166,7 +166,7 @@ const CameraTake = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:'#1A8FE3',
+        backgroundColor:'#F2E8CF',
         paddingTop:0,
     },
     cameraContainer: {

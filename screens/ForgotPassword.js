@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from '../firebase';
+import styles from '../styles';
 
 const ForgotPassword = () => {
   const sendPasswordResetEmail = () => {
@@ -23,7 +24,7 @@ const ForgotPassword = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.messageText}>
+      <Text style={styles.text}>
         Hi, {auth.currentUser?.email}! To reset your password, please click the button below. 
         We will send you an email with instructions.
       </Text>
@@ -31,36 +32,10 @@ const ForgotPassword = () => {
         onPress={sendPasswordResetEmail}
         style={[styles.button, styles.buttonOutline]}
       >
-        <Text style={styles.buttonText}>Forget Password</Text>
+        <Text style={styles.text}>Forget Password</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
 export default ForgotPassword;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    backgroundColor: '#0782F9',
-    width: '60%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  messageText: {
-    textAlign: 'center',
-    color: 'black', // Choose your desired text color
-    marginBottom: 20,
-  },
-});

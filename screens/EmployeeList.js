@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TextInput, Button, ScrollView } from 'react-native';
 import { Table, Row, Rows } from 'react-native-reanimated-table';
 import { firebase } from '../firebase';
+import styles from '../styles';
 
 const EmployeeList = () => {
   const [originalUsers, setOriginalUsers] = useState([]);
@@ -88,7 +89,7 @@ const EmployeeList = () => {
   const tableHead = ['Date', 'Name', 'Email', 'EventType', 'Timestamp', 'Status'];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.containerSalary}>
       <View style={styles.filterContainer}>
         <TextInput
           style={styles.input}
@@ -102,7 +103,7 @@ const EmployeeList = () => {
           value={selectedDate}
           onChangeText={(text) => setSelectedDate(text)}
         />
-        <View style={styles.buttonContainer}>
+        <View style={styles.buttonContainerSalary}>
           <Button title="Search" onPress={filterData} style={styles.button} />
           <Button title="Reset" onPress={resetFilter} style={styles.button} />
         </View>
@@ -114,32 +115,5 @@ const EmployeeList = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  text: { margin: 6 },
-  filterContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    marginRight: 10,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginLeft: 10, // Adjust the margin as needed
-  },
-  button: {
-    flex: 1,
-    marginRight: 10, // Adjust the margin as needed
-  },
-});
 
 export default EmployeeList;

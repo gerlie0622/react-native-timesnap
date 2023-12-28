@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome
 import { Alert } from 'react-native';
+import styles from '../styles';
 
 const Attendance = () => {
   const [currentDateTime, setCurrentDateTime] = useState(getCurrentDateTime());
@@ -220,52 +221,5 @@ const Attendance = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:'#1A8FE3',
-  },
-
-  textStyle: {
-    fontSize:25,
-    padding:10,
-    color:'#fff',
-    marginBottom:50,
-  },
-  textStylee: {
-    fontSize:25,
-    padding:10,
-    color:'#fff',
-  },
-  button: {
-    backgroundColor: '#F17105',
-    width: '60%',
-    padding: 8,
-    borderRadius: 10,
-    marginBottom: 10,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#EAE0C8',
-    
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  disabledButton: {
-    backgroundColor: '#a0a0a0', // Use a different color for the disabled state
-  },
-  iconButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#F2D0A4',
-  },
-});
 
 export default Attendance;
