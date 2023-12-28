@@ -1,6 +1,6 @@
 // HomeScreen2.js
 import { useNavigation } from '@react-navigation/core';
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth, dbFirestore } from '../firebase';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,6 +8,12 @@ import styles from '../styles';
 
 const HomeScreen2 = () => {
   const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Hide the header
+    });
+  }, [navigation]);
   
 
   const handleAttendance = () => {
