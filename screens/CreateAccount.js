@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import { Picker } from '@react-native-picker/picker';
 import { auth, dbFirestore } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import styles from '../styles';
 
 const CreateAccount = () => {
   const [name, setName] = useState('');
@@ -57,21 +58,21 @@ const CreateAccount = () => {
         <Text style={styles.title}>Create Account</Text>
 
         <TextInput
-          style={styles.input}
+          style={styles.inputCreate}
           placeholder="Full Name"
           value={name}
           onChangeText={(text) => setName(text)}
         />
 
         <TextInput
-          style={styles.input}
+          style={styles.inputCreate}
           placeholder="Email Address"
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
 
         <TextInput
-          style={styles.input}
+          style={styles.inputCreate}
           placeholder="Contact Number"
           value={contactNumber}
           onChangeText={(text) => setContactNumber(text)}
@@ -108,91 +109,19 @@ const CreateAccount = () => {
         </Picker>
 
         <TextInput
-          style={styles.input}
+          style={styles.inputCreate}
           placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
 
-        <TouchableOpacity onPress={handleCreateAccount} style={styles.button}>
+        <TouchableOpacity onPress={handleCreateAccount} style={styles.buttonCreate}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    resizeMode: 'cover',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
-    elevation: 3,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: 'black',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: 'white',
-  },
-  picker: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: 'white',
-  },
-  label: {
-    fontSize: 16,
-    marginVertical: 10,
-    color: 'black',
-  },
-  button: {
-    backgroundColor: '#1877f2', // Facebook color
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-});
 
 export default CreateAccount;
