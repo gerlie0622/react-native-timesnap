@@ -8,6 +8,10 @@ import { getDownloadURL, uploadBytes, ref, deleteObject } from 'firebase/storage
 import { Alert } from 'react-native';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { addDoc, collection } from 'firebase/firestore';
+import { dbFirestore } from '../firebase';
+
+
 
 const CameraTake = () => {
     const [image, setImage] = useState(null);
@@ -88,22 +92,41 @@ const CameraTake = () => {
         });
 
         try {
-            // Use fetch to create a blob object
-            const response = await fetch(uri);
-            const blob = await response.blob();
-
             const storageRef = ref(storage, `Images/image-${Date.now()}`);
-            await uploadBytes(storageRef, blob);
+            const blob = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = function () {
+                    resolve(xhr.response);
+                };
+                xhr.onerror = function (e) {
+                    reject(new TypeError("Network request failed"));
+                };
+                xhr.responseType = "blob";
+                xhr.open("GET", uri, true);
+                xhr.send(null);
+            });
 
-            // Return the download URL directly
-            return await getDownloadURL(storageRef);
+            // Upload the image to Firebase Storage
+        const snapshot = await uploadBytes(storageRef, blob);
+
+        // Get the download URL for the uploaded image
+        const imageURL = await getDownloadURL(snapshot.ref);
+
+        // Add image details to 'imageDetails' collection in Firestore
+        await addDoc(collection(dbFirestore, 'imageDetails'), {
+            userEmail: user.email,
+            userName: userData.name,
+            timestamp: Date.now(),
+            imageURL,
+        });
+    
+            return imageURL;
         } catch (error) {
             alert(`Error : ${error}`);
         }
 
         const imageDetails = {
             userEmail: user.email,
-            userName: user.displayName,
             timestamp: Date.now(),
         };
 
