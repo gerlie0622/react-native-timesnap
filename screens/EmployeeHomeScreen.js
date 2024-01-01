@@ -11,44 +11,43 @@ const EmployeeHomeScreen = () => {
     navigation.navigate("Camera")
   };
 
+  const handleForgotPassword = () => {
+    navigation.navigate("ForgotPassword")
+  }
 
-    const handleForgotPassword = () => {
-      navigation.navigate("ForgotPassword")
-    }
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace("Login")
+      })
+      .catch(error => alert(error.message))
+  }
 
-    const handleSignOut = () => {
-      auth
-        .signOut()
-        .then(() => {
-          navigation.replace("Login")
-        })
-        .catch(error => alert(error.message))
-    }
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Hide the header
+    });
+  }, [navigation]);
 
-    useLayoutEffect(() => {
-      navigation.setOptions({
-        headerShown: false, // Hide the header
-      });
-    }, [navigation]);
-  
 
-return (
-  <View style={styles.container}>
-  <Text style={styles.greeting}>Hi, {auth.currentUser?.email}</Text>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.greeting}>Hi, {auth.currentUser?.email}</Text>
 
-  <TouchableOpacity style={styles.buttonHome} onPress={handleAttendance}>
+      <TouchableOpacity style={styles.buttonHome} onPress={handleAttendance}>
         <Text style={styles.buttonText}>Attendance</Text>
       </TouchableOpacity>
-      
-  <TouchableOpacity style={styles.buttonHome} onPress={handleForgotPassword}>
+
+      <TouchableOpacity style={styles.buttonHome} onPress={handleForgotPassword}>
         <Text style={styles.buttonText}>Forgot Password</Text>
       </TouchableOpacity>
 
-
-  <TouchableOpacity style={styles.buttonHome} onPress={handleSignOut}>
+      <TouchableOpacity style={styles.buttonHome} onPress={handleSignOut}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
-      </View>
+
+    </View>
   );
 }
 
