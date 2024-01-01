@@ -16,6 +16,7 @@ import SalaryAdmin from './screens/SalaryAdmin';
 import AllEmployees from './screens/AllEmployees';
 import EditUser from './screens/EditUser';
 import SplashScreen from 'react-native-splash-screen'
+import EmployeeImages from './screens/EmployeeImages';
 
 
 const Stack = createNativeStackNavigator();
@@ -46,6 +47,8 @@ export default function App() {
           <Stack.Screen name="AllEmployees" component= { AllEmployees} />
           <Stack.Screen name="Camera" component={CameraTake} />
           <Stack.Screen name="EditUser" component={EditUser} />
+          <Stack.Screen name="EmployeeImages" component={EmployeeImages} />
+          
           
 
 
