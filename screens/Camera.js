@@ -115,7 +115,6 @@ const CameraTake = () => {
         // Add image details to 'imageDetails' collection in Firestore
         await addDoc(collection(dbFirestore, 'imageDetails'), {
             userEmail: user.email,
-            userName: userData.name,
             timestamp: Date.now(),
             imageURL,
         });
