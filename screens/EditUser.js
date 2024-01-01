@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, Button, Alert, Picker } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { firebase } from '../firebase';
+import { getFirestore, collection, doc, updateDoc } from 'firebase/firestore';
+
 
 const EditUser = () => {
   const [name, setName] = useState('');
@@ -25,15 +26,17 @@ const EditUser = () => {
 
   const handleUpdate = async () => {
     try {
-      const userRef = firebase.firestore().collection('users').doc(user.uid);
-
-      await userRef.update({
-      name: name,
-      email: email,
-      contactNumber: contactNumber,
-      salary: parseInt(salary),
-      schedule: schedule,
-    });
+      const db = getFirestore();
+      const userRef = doc(db, 'users', user.uid);
+  
+      await updateDoc(userRef, {
+        name: name,
+        email: email,
+        contactNumber: contactNumber,
+        salary: parseInt(salary),
+        schedule: schedule,
+        type: 'employee', // Assuming type remains constant for an existing user
+      });
 
       Alert.alert('Success', 'User updated successfully');
       navigation.goBack();
