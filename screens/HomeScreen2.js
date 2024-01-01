@@ -31,6 +31,10 @@ const HomeScreen2 = () => {
   const handleCreateAccount = () => {
     navigation.navigate('CreateAccount');
   };
+  const handleEmployeeImages = () => {
+    // Navigating to EmployeeImages
+    navigation.navigate('EmployeeImages', { userEmail: 'test@example.com' });
+  };
   const handleAboutUs = () => {
     console.log('About Us button clicked');
   };
@@ -61,6 +65,7 @@ const HomeScreen2 = () => {
         {renderButton('Employee Details', 'list', handleAllEmployees)}
         {renderButton('Salary Information', 'money', handleSalary)}
         {renderButton('Create New Account', 'user-plus', handleCreateAccount)}
+        {renderButton('Employee Images', 'image', handleEmployeeImages)}
         {renderButton('About Us', 'info-circle', handleAboutUs)}
         {renderButton('Logout', 'sign-out', handleSignOut)}
       </View>
