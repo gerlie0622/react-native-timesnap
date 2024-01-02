@@ -10,6 +10,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { addDoc, collection } from 'firebase/firestore';
 import { dbFirestore } from '../firebase';
+import { query, where, getDocs, deleteDoc } from 'firebase/firestore';
 
 
 
@@ -139,14 +140,28 @@ const CameraTake = () => {
     const deleteImage = async () => {
         setisLoading(true);
         const deleteRef = ref(storage, image);
+      
         try {
-            deleteObject(deleteRef).then(() => {
-                setImage(null);
-            })
+          // Delete the image from storage
+          await deleteObject(deleteRef);
+      
+          // Delete the corresponding document in the 'imageDetails' collection
+          const imageDetailsCollectionRef = collection(dbFirestore, 'imageDetails');
+          const imageQuery = query(imageDetailsCollectionRef, where('imageURL', '==', image));
+      
+          const imageDetailsSnapshot = await getDocs(imageQuery);
+          imageDetailsSnapshot.forEach(async (doc) => {
+            await deleteDoc(doc.ref);
+          });
+      
+          // Reset the image state
+          setImage(null);
+          setisLoading(false);
         } catch (error) {
-            alert(`Error : ${error}`);
+          alert(`Error: ${error}`);
+          setisLoading(false);
         }
-    }
+      };
 
     const handleConfirm = () => {
         // Navigate back to the original screen
