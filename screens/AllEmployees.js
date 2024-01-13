@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { firebase } from '../firebase';
 import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { getDatabase, update, remove } from "firebase/database";
+import { dbFirestore } from '../firebase';
 
 
 const AllEmployees = () => {
@@ -32,28 +34,45 @@ const AllEmployees = () => {
     navigation.navigate('UserDetails', { uid });
   };
 
-  const handleEdit = (user) => {
+  const handleEdit = async (user) => {
     navigation.navigate('EditUser', {
       user,
-      onUserUpdated: (updatedUser) => {
-        // Update the user in the local state
-        const updatedUsers = users.map((u) => (u.uid === updatedUser.uid ? updatedUser : u));
-        setUsers(updatedUsers);
+      onUserUpdated: async (updatedUser) => {
+        try {
+          const db = getDatabase();
+          const userRef = db.ref(`users/${updatedUser.uid}`);
+          await update(userRef, updatedUser);
+          Alert.alert('Success', 'User updated successfully');
+        } catch (error) {
+          console.error('Error updating user:', error);
+          Alert.alert('Error', 'Failed to update user');
+        }
       },
     });
   };
-
+ 
   const handleDelete = async (uid) => {
+    console.log('Attempting to delete user with UID:', uid);
+  
     try {
-      const userRef = firebase.firestore().collection('users').doc(uid);
-      await userRef.delete();
+      const usersRef = dbFirestore.collection('users');
+      
+      // Delete the user document from Firestore
+      await usersRef.doc(uid).delete();
+      
+      console.log('User deleted successfully');
+  
+      // Update the local state by filtering out the deleted user
+      setUsers((prevUsers) => prevUsers.filter(user => user.uid !== uid));
+      
       Alert.alert('Success', 'User deleted successfully');
     } catch (error) {
       console.error('Error deleting user:', error);
       Alert.alert('Error', 'Failed to delete user');
     }
   };
-
+  
+  
   const handleSearch = () => {
     const filteredUsers = users.filter((user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -82,16 +101,16 @@ const AllEmployees = () => {
         style={[styles.actionButton, styles.editButton]} // Apply styles for the Edit button
         onPress={() => handleEdit(user)}
       >
-        <Text style={styles.editButtonText}>Edit</Text>
+        <Text style={styles.editText}>Edit</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.actionButton, styles.deleteButton]} // Apply styles for the Delete button
         onPress={() => handleDelete(user.uid)}
       >
-        <Text style={styles.deleteButtonText}>Delete</Text>
+        <Text style={styles.deleteText}>Delete</Text>
       </TouchableOpacity>
     </View>
-  );  
+  );
 
   const tableHead = ['Name', 'Email', 'Contact Number', 'Salary', 'Schedule', 'Actions'];
 
@@ -137,20 +156,16 @@ const AllEmployees = () => {
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    paddingTop: 30,
-    backgroundColor: '#F2E8CF',
-  },
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#F5F5F5' }, // Light gray background color for the container
   searchContainer: {
     flexDirection: 'row',
     marginBottom: 10,
     alignItems: 'center',
-    backgroundColor: '#809BCE',
+    backgroundColor: '#3498DB', // Formal blue color for the search container
     borderRadius: 10,
     padding: 8,
   },
+
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -165,17 +180,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  searchInput: {
-    flex: 1,
-    marginRight: 10,
-    padding: 8,
-    fontSize: 14,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-  },
-  buttonContainer: {
-    width: 80,
-  },
+
+  searchInput: { flex: 1, marginRight: 10, padding: 8, fontSize: 14, backgroundColor: '#FFF', borderRadius: 8 }, // White background color for the text input with rounded corners
+  buttonContainer: { width: 80 },
   card: {
     backgroundColor: '#FFF',
     borderRadius: 10,
@@ -187,28 +194,39 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
-  cardText: {
-    fontSize: 18,
-    color: '#333',
-    fontWeight: 'bold',
-    marginBottom: 8,
+  cardText: { fontSize: 18, color: '#333', fontWeight: 'bold', marginBottom: 8 },
+  cardDetail: { fontSize: 14, color: '#555', marginBottom: 4 },
+  actionsContainer: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
+  editText: { color: '#3498DB', fontWeight: 'bold' }, // Formal blue color for the edit text
+  deleteText: { color: '#E74C3C', fontWeight: 'bold' }, // Red color for the delete text
+
+  searchContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    alignItems: 'center',
+    borderColor: '#3498DB', // Blue outline color for the search container
+    borderWidth: 3,
+    borderRadius: 10,
+    padding: 8,
   },
-  cardDetail: {
+  searchInput: {
+    flex: 1,
+    marginRight: 10,
+    padding: 8,
     fontSize: 14,
-    color: '#555',
-    marginBottom: 4,
+    color: '#333', // Text color
   },
   searchButton: {
     width: 40,
     height: 40,
-    backgroundColor: '#809BCE',
+    backgroundColor: '#3498DB',
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   resetButton: {
     width: 80,
-    backgroundColor: '#EE6C4D',
+    backgroundColor: '#E74C3C', // Red color for the reset button background
     borderRadius: 8,
     marginLeft: 10,
     paddingVertical: 8,
@@ -217,29 +235,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   resetButtonText: {
-    color: '#FFF',
+    color: '#FFF', // White text color for the reset button
     fontWeight: 'bold',
   },
+
   editButton: {
-    backgroundColor: '#809BCE',
-    marginRight: 8,
-    borderColor: '#293241',
-    borderWidth: 1,
+    backgroundColor: '#3498DB', // Blue color for the Edit button background
+    marginRight: 8, // Added margin to separate Edit and Delete buttons
+    borderColor: '#3498DB', // Blue color for the Edit button border
+    borderWidth: 1, // Added border line to the Edit button
   },
   deleteButton: {
-    backgroundColor: '#EE6C4D',
-    marginLeft: 8,
-    borderColor: '#293241',
-    borderWidth: 1,
+    backgroundColor: '#E74C3C', // Red color for the Delete button background
+    marginLeft: 8, // Added margin to separate Edit and Delete buttons
+    borderColor: '#E74C3C', // Red color for the Delete button border
+    borderWidth: 1, // Added border line to the Delete button
   },
-  editButtonText: {
-    color: '#FFF',
+  editText: {
+    color: '#FFF', // White text color for the Edit button
     fontWeight: 'bold',
   },
-  deleteButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',  
+  deleteText: {
+    color: '#FFF', // White text color for the Delete button
+    fontWeight: 'bold',
   },
+
 });
 
-export default AllEmployees;
+
+export default AllEmployees; 

@@ -48,7 +48,7 @@ export default function App() {
           <Stack.Screen name="Camera" component={CameraTake} />
           <Stack.Screen name="EditUser" component={EditUser} />
           <Stack.Screen name="EmployeeImages" component={EmployeeImages} />
-          
+        
           
 
 

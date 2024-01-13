@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TextInput, Button, ScrollView } from 'react-native';
 import { Table, Row, Rows } from 'react-native-reanimated-table';
 import { firebase } from '../firebase';
-import styles from '../styles';
+
 
 const SalaryAdmin = () => {
   const [originalUsers, setOriginalUsers] = useState([]);
@@ -109,7 +109,7 @@ const SalaryAdmin = () => {
   const tableHead = ['Date', 'Name', 'Email', 'Time In', 'Time Out', 'Duration', 'Salary'];
 
   return (
-    <ScrollView style={styles.containerSalary}>
+    <ScrollView style={styles.container}>
       <View style={styles.filterContainer}>
         <TextInput
           style={styles.input}
@@ -129,12 +129,12 @@ const SalaryAdmin = () => {
           value={endDate}
           onChangeText={(text) => setEndDate(text)}
         />
-        <View style={styles.buttonContainerSalary}>
+        <View style={styles.buttonContainer}>
           <Button title="Search" onPress={filterData} style={styles.button} />
           <Button title="Reset" onPress={resetFilter} style={styles.button}/>
         </View>
       </View>
-      <Table borderStyle={{ borderWidth: 2, borderColor: '#293241'}}>
+      <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
         <Row data={tableHead} style={styles.head} textStyle={styles.text} />
         <Rows data={filteredUsers} textStyle={styles.text} />
       </Table>
@@ -142,5 +142,27 @@ const SalaryAdmin = () => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  head: { height: 40, backgroundColor: '#f1f8ff' },
+  text: { margin: 6, color: '#333' },
+  filterContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    marginRight: 10,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingLeft: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginLeft: 10,
+  },
+});
 
 export default SalaryAdmin;
