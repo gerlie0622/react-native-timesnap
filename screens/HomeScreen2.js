@@ -28,7 +28,7 @@ const HomeScreen2 = () => {
     navigation.navigate('EmployeeImages', { userEmail: 'test@example.com' });
   };
   const handleAboutUs = () => {
-    console.log('About Us button clicked');
+    navigation.navigate('AboutUs');
   };
   const handleSignOut = () => {
     auth
