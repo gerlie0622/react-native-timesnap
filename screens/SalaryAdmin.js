@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TextInput, Button, ScrollView } from 'react-native';
 import { Table, Row, Rows } from 'react-native-reanimated-table';
 import { firebase } from '../firebase';
-
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'
 
 const SalaryAdmin = () => {
   const [originalUsers, setOriginalUsers] = useState([]);
@@ -108,6 +109,17 @@ const SalaryAdmin = () => {
 
   const tableHead = ['Date', 'Name', 'Email', 'Time In', 'Time Out', 'Duration', 'Salary'];
 
+  const exportToPDF=()=>{
+    const doc = new jsPDF()
+    doc.text("Employee Salary",20,10)
+    doc.autoTable({
+      columns:tableHead,
+      body:filteredUsers
+    })
+
+    doc.save('employee_salary.pdf')
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.filterContainer}>
@@ -132,6 +144,7 @@ const SalaryAdmin = () => {
         <View style={styles.buttonContainer}>
           <Button title="Search" onPress={filterData} style={styles.button} />
           <Button title="Reset" onPress={resetFilter} style={styles.button}/>
+          <Button title="Export" onPress={exportToPDF} style={styles.button} />
         </View>
       </View>
       <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
