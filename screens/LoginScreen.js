@@ -70,12 +70,12 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={-100}>
       <View style={styles.inputContainer}>
-      <View style={styles.centeredContainer}></View>
-       {/* Clock Logo */}
-      <Image 
-      source={require('../assets/timesnap-logo2.png')} 
-      style={styles.logo} 
-      />
+      <View style={styles.centeredContainer}>
+      <Text style={styles.timesnapText}>
+        TIME<Text style={styles.italicText}>SNAP</Text>
+      </Text>
+      </View>
+     
 
         {/* Email Input with Icon */}
         <View style={styles.inputWithIcon}>
@@ -227,6 +227,15 @@ const styles = StyleSheet.create({
   loadingContainer: {
     marginTop: 20,
     alignItems: 'center',
+  },
+  timesnapText: {
+    fontSize: 80,
+    fontWeight: 'bold',
+    color: '#3498DB', // Adjust color as needed
+    marginBottom: 20,
+  },
+  italicText: {
+    fontStyle: 'italic',
   },
 });
 
