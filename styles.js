@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor:'#f1f8ff',
+      backgroundColor:'#F5F5F5',
     },
     containerSalary:{
         flex:1,
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     button: {
-      backgroundColor: '#EE6C4D',
+      backgroundColor: '#3498DB',
       width: '80%',
       padding: 15,
       borderRadius: 10,
@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
         marginTop:10,
       },
     buttonHome:{
-        backgroundColor: '#EE6C4D',
+        backgroundColor: '#3498DB',
         width: '70%',
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: '#EAE0C8',
+        borderColor: '#3498DB',
         marginTop: 15,
     },
     buttonText: {
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         right: 20,
         padding: 10,
         borderRadius: 10,
-        backgroundColor: '#F2D0A4',
+        backgroundColor: '#3498DB',
       },
     textStyle: {
         fontSize:25,

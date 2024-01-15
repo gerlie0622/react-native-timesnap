@@ -203,7 +203,7 @@ const CameraTake = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:'#F2E8CF',
+        backgroundColor:'#F5F5F5',
         paddingTop:0,
     },
     cameraContainer: {
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     flipButton: {
-        backgroundColor: '#F17105',
+        backgroundColor: '#3498DB',
         width: '40%',
         padding: 8,
         borderRadius: 10,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     takePictureButton: {
         borderRadius: 50, // Make it a circle
         padding: 20,
-        backgroundColor: '#F17105',
+        backgroundColor: '#3498DB',
         width: '50%',
         alignItems: 'center',
         borderWidth: 2,
