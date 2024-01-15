@@ -5,32 +5,49 @@ import { Title, Paragraph, Card } from 'react-native-paper';
 const AboutUs = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Title style={styles.heading}>About Us</Title>
+      <Title style={styles.heading}>Our Story</Title>
 
-      <Paragraph>Welcome to our app! We are a team of developers from the Polytechnic University of the Philippines.</Paragraph>
+      <Card style={styles.developersCard}>
+        <Card.Content>
+        Welcome to our app! We founded this company with a shared passion for creating innovative solutions that enhance the user experience and provide value to our clients.
+      The idea was born from the realization that we noticed that we should take advantage of modern technology and use it to our advantage. We noticed there was a need for a workplace to be more organized and have an accurate time management system. Motivated by this insight, we embarked on a journey to create a company that stands out in the market.
+      </Card.Content>
+      </Card>
 
-      <Paragraph style={styles.missionHeading}>Our Mission</Paragraph>
-      <Paragraph style={styles.mission}>
-        To deliver high-quality software solutions that enhance the user experience and provide value to our clients.
+      <Title style={styles.heading}>Our Background and Team</Title>
+
+      <Card style={styles.developersCard}>
+        <Card.Content>
+        We are a team of dedicated developers from the Polytechnic University of the Philippines. Our diverse backgrounds and expertise come together to lead this company toward success. As individuals, we bring unique skills and perspectives that contribute to our collective vision.
+        </Card.Content>
+      </Card>
+
+      <Title style={styles.heading}>Evolution of Our Company</Title>
+
+      <Card style={styles.developersCard}>
+        <Card.Content>
+        Since our inception, we've faced numerous challenges and celebrated successes. Our journey has been marked by continuous improvement, overcoming obstacles, and evolving to meet the dynamic needs of our users. Each phase of our evolution has shaped the company into what it is today.
+        </Card.Content>
+      </Card>
+
+      <Title style={styles.heading}>Mission and Vision</Title>
+
+      <Card style={styles.developersCard}>
+        <Card.Content>
+        Our mission is to deliver high-quality software solutions. We strive for excellence in every project, foster innovation and creativity, and build lasting relationships with our clients and users.
+        </Card.Content>
+      </Card>
+
+      <Paragraph>
+        Looking ahead, our vision is to utilize technology for the betterment of our future. We are committed to taking the necessary steps to transform our business and make a positive impact in the industry.
       </Paragraph>
 
-      <Paragraph style={styles.goalsHeading}>Our Goals</Paragraph>
-      <Paragraph style={styles.goals}>
-        1. Strive for excellence in every project.
-      </Paragraph>
-      <Paragraph style={styles.goals}>
-        2. Foster innovation and creativity.
-      </Paragraph>
-      <Paragraph style={styles.goals}>
-        3. Build lasting relationships with our clients and users.
-      </Paragraph>
-      
       <Card style={styles.developersCard}>
         <Card.Content>
           <Title style={styles.developerName}>Ann Vergie Adecer</Title>
           <Paragraph>4th-year student at PUP</Paragraph>
           <Paragraph>Passionate about creating user-friendly and innovative solutions.</Paragraph>
-          <Paragraph>Favorite Color: Navy Blue</Paragraph>
+          <Paragraph>Fun Fact: Loves experimenting with different art forms and mediums.</Paragraph>
         </Card.Content>
       </Card>
 
@@ -39,7 +56,7 @@ const AboutUs = () => {
           <Title style={styles.developerName}>Gerlie Iries Dela Cruz</Title>
           <Paragraph>4th-year student at PUP</Paragraph>
           <Paragraph>Enthusiastic about front-end development and UI/UX design.</Paragraph>
-          <Paragraph>Favorite Color: Blue</Paragraph>
+          <Paragraph>Fun Fact: Enjoys hiking and exploring new places in her free time.</Paragraph>
         </Card.Content>
       </Card>
 
@@ -48,11 +65,12 @@ const AboutUs = () => {
           <Title style={styles.developerName}>Gabriel Alfonso Mapa</Title>
           <Paragraph>4th-year student at PUP</Paragraph>
           <Paragraph>Passionate about back-end development and server-side technologies.</Paragraph>
-          <Paragraph>Favorite Color: White</Paragraph>
+          <Paragraph>Fun Fact: Enjoys playing musical instruments, particularly the guitar.</Paragraph>
         </Card.Content>
       </Card>
 
-
+      <Paragraph>"TimeSnap, shaping the future, one tap at a time – revolutionizing workplaces with seamless and accurate time management solutions."</Paragraph>
+      
       <Paragraph style={styles.contactInfo}>Contact us for any questions or feedback.</Paragraph>
     </ScrollView>
   );
@@ -63,7 +81,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-between',
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ADD8E6',
   },
   heading: {
     fontSize: 24,
@@ -80,24 +98,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#3F4E64', // Blue
-  },
-  missionHeading: {
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3F4E64', // Blue
-  },
-  mission: {
-    color: '#666666',
-  },
-  goalsHeading: {
-    marginTop: 10,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3F4E64', // Blue
-  },
-  goals: {
-    color: '#666666',
   },
   contactInfo: {
     marginTop: 20,
