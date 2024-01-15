@@ -7,6 +7,7 @@ import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getDatabase, update, remove } from "firebase/database";
 import { dbFirestore } from '../firebase';
+import { getFirestore, collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
 
 const AllEmployees = () => {
@@ -55,17 +56,29 @@ const AllEmployees = () => {
     console.log('Attempting to delete user with UID:', uid);
   
     try {
-      const usersRef = dbFirestore.collection('users');
-      
-      // Delete the user document from Firestore
-      await usersRef.doc(uid).delete();
-      
-      console.log('User deleted successfully');
+      const db = getFirestore();
+      const usersCollectionRef = collection(db, 'users');
   
-      // Update the local state by filtering out the deleted user
-      setUsers((prevUsers) => prevUsers.filter(user => user.uid !== uid));
-      
-      Alert.alert('Success', 'User deleted successfully');
+      // Query to get the user document with matching uid
+      const userDocSnapshot = await getDocs(query(usersCollectionRef, where('uid', '==', uid)));
+  
+      if (userDocSnapshot.docs.length > 0) {
+        // Assuming there's only one document with the specified uid
+        const userRef = doc(usersCollectionRef, userDocSnapshot.docs[0].id);
+  
+        // Use deleteDoc to delete the document in Firestore
+        await deleteDoc(userRef);
+  
+        console.log('User deleted successfully');
+  
+        // Update the local state by filtering out the deleted user
+        setUsers((prevUsers) => prevUsers.filter(user => user.uid !== uid));
+  
+        Alert.alert('Success', 'User deleted successfully');
+      } else {
+        console.log('User not found with UID:', uid);
+        Alert.alert('Error', 'User not found');
+      }
     } catch (error) {
       console.error('Error deleting user:', error);
       Alert.alert('Error', 'Failed to delete user');
@@ -98,13 +111,13 @@ const AllEmployees = () => {
   const renderActions = (user) => (
     <View style={styles.actionsContainer}>
       <TouchableOpacity
-        style={[styles.actionButton, styles.editButton]} // Apply styles for the Edit button
+        style={[styles.actionButton, styles.editButton]}
         onPress={() => handleEdit(user)}
       >
         <Text style={styles.editText}>Edit</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.actionButton, styles.deleteButton]} // Apply styles for the Delete button
+        style={[styles.actionButton, styles.deleteButton]}
         onPress={() => handleDelete(user.uid)}
       >
         <Text style={styles.deleteText}>Delete</Text>

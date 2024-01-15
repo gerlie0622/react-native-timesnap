@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, Button, Alert, Picker } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { getFirestore, collection, doc, updateDoc } from 'firebase/firestore';
-
+import { getFirestore, doc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 
 const EditUser = () => {
   const [name, setName] = useState('');
@@ -27,25 +26,37 @@ const EditUser = () => {
   const handleUpdate = async () => {
     try {
       const db = getFirestore();
-      const userRef = doc(db, 'users', user.uid);
+      const usersCollectionRef = collection(db, 'users');
   
-      await updateDoc(userRef, {
-        name: name,
-        email: email,
-        contactNumber: contactNumber,
-        salary: parseInt(salary),
-        schedule: schedule,
-        type: 'employee', // Assuming type remains constant for an existing user
-      });
-
-      Alert.alert('Success', 'User updated successfully');
-      navigation.goBack();
+      // Query to get the user document with matching uid
+      const userDocSnapshot = await getDocs(query(usersCollectionRef, where('uid', '==', user.uid)));
+  
+      if (userDocSnapshot.docs.length > 0) {
+        // Assuming there's only one document with the specified uid
+        const userRef = doc(usersCollectionRef, userDocSnapshot.docs[0].id);
+  
+        await updateDoc(userRef, {
+          name: name,
+          email: email,
+          contactNumber: contactNumber,
+          salary: parseInt(salary),
+          schedule: schedule,
+          type: 'employee', // Assuming type remains constant for an existing user
+        });
+  
+        Alert.alert('Success', 'User updated successfully');
+        navigation.goBack();
+      } else {
+        // Handle the case when the user document with the specified uid is not found
+        Alert.alert('Error', 'User not found');
+      }
     } catch (error) {
       console.error('Error updating user:', error);
       Alert.alert('Error', 'Failed to update user');
     }
-  };
-
+  };  
+  
+  
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
