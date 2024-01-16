@@ -17,33 +17,32 @@ const EmployeeList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const timeEntriesSnapshot = await todoRef.get();
+        const timeEntriesSnapshot = await todoRef.where('eventType', '==', 'Time In').get();
         const timeEntriesData = timeEntriesSnapshot.docs.map((doc) => doc.data());
-
+    
         const usersSnapshot = await usersRef.get();
         const usersData = usersSnapshot.docs.reduce((acc, doc) => {
           acc[doc.data().email] = doc.data();
           return acc;
         }, {});
-
+    
         const userList = timeEntriesData.map((entry) => {
           const user = usersData[entry.userEmail] || { name: 'Unknown', schedule: {} };
           const schedule = user.schedule || {};
           const timeInDate = new Date(entry.timestamp);
-
+    
           // Determine status based on timestamp in "timeentriesdraft"
           let status = 'On Time';
           const entryHour = timeInDate.getHours();
           const entryMinute = timeInDate.getMinutes();
           const entrySecond = timeInDate.getSeconds();
-
-          if (
-            entryHour > 9 ||
-            (entryHour === 9 && (entryMinute > 0 || entrySecond > 0))
-          ) {
+    
+          if (entryHour > 9 || (entryHour === 9 && entryMinute > 0)) {
             status = 'Late';
           }
-
+    
+          const timeIn = `${('0' + entryHour).slice(-2)}:${('0' + entryMinute).slice(-2)}:${('0' + entrySecond).slice(-2)}`;
+    
           return [
             entry.date,
             user.name,
@@ -53,7 +52,7 @@ const EmployeeList = () => {
             status,
           ];
         });
-
+    
         setOriginalUsers(userList);
         setFilteredUsers(userList);
       } catch (error) {
@@ -61,6 +60,8 @@ const EmployeeList = () => {
       }
     };
 
+    
+    
     const unsubscribe = todoRef.onSnapshot((querySnapshot) => {
       fetchData();
     });
@@ -90,7 +91,7 @@ const EmployeeList = () => {
 
   const tableHead = ['Date', 'Name', 'Email', 'EventType', 'Timestamp', 'Status'];
 
-  const exportToPDF=()=>{
+ const exportToPDF=()=>{
     const doc = new jsPDF()
     doc.text("Employee Status",20,10)
     doc.autoTable({
@@ -100,6 +101,8 @@ const EmployeeList = () => {
 
     doc.save('employee_status.pdf')
   }
+
+  
   
   return (
     <ScrollView style={styles.container}>
@@ -119,7 +122,7 @@ const EmployeeList = () => {
         <View style={styles.buttonContainer}>
           <Button title="Search" onPress={filterData} style={styles.button} />
           <Button title="Reset" onPress={resetFilter} style={styles.button} />
-          <Button title="Export" onPress={exportToPDF} style={styles.button} />
+          <Button title="Export"  onPress={exportToPDF} style={styles.button} />
         </View>
       </View>
       <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>

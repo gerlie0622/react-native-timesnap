@@ -85,7 +85,7 @@ const Attendance = () => {
       {
         text: 'OK',
         onPress: () => {
-          setTimeInTimestamp(currentTime);
+          setTimeInTimestamp(currentTime); 
           saveTimeToFirestore('Time In', currentTime);
           setTimeInEnabled(false);
           setTimeOutEnabled(true);
@@ -152,7 +152,7 @@ const Attendance = () => {
     console.log('Saving time to Firestore...');
 
     try {
-      const timeEntriesRef = collection(dbFirestore, 'timeEntriesDraft');
+      const timeEntriesRef = collection(dbFirestore, 'timeEntriesNew');
 
       let duration = null;
       if (eventType === 'Time Out' && timeInTimestamp) {

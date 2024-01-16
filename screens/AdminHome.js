@@ -1,37 +1,22 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { dbFirestore } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons for the back button
 
-const UserCount = ({ navigation }) => {
+
+const UserCount = () => {
   const [userCount, setUserCount] = useState(0);
   const [presentCount, setPresentCount] = useState(0);
   const [absentCount, setAbsentCount] = useState(0);
 
-  useLayoutEffect(() => {
-    if (navigation) {
-      navigation.setOptions({
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={30} color="#fff" style={styles.headerBackIcon} />
-          </TouchableOpacity>
-        ),
-        headerShown: true,
-        title: 'Admin Home',
-        headerStyle: {
-          backgroundColor: '#1A8FE3',
-        },
-        headerTintColor: '#fff',
-      });
-    }
-  }, [navigation]);
-
   useEffect(() => {
     const fetchUserCounts = async () => {
       try {
+        // Fetch the user collection from Firestore
         const usersRef = collection(dbFirestore, 'users');
         const usersSnapshot = await getDocs(usersRef);
+
+        // Set the total registered user count
         setUserCount(usersSnapshot.size);
       } catch (error) {
         console.error('Error fetching user count:', error.message);
@@ -40,58 +25,69 @@ const UserCount = ({ navigation }) => {
 
     const fetchTimeEntries = async () => {
       try {
-        const timeEntriesRef = collection(dbFirestore, 'timeEntriesDraft');
+        // Fetch the timeEntries collection from Firestore
+        const timeEntriesRef = collection(dbFirestore, 'timeEntriesNew');
         const timeEntriesSnapshot = await getDocs(timeEntriesRef);
 
         let presentCount = 0;
         let absentCount = 0;
+
+        // Use a set to keep track of users who missed "Time In" on a given day
         const absentUsers = new Set();
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // Check if it's a new day and reset the counts
+        if (isNewDay()) {
+          setPresentCount(0);
+          setAbsentCount(0);
+        }
 
         timeEntriesSnapshot.forEach((doc) => {
           const eventType = doc.data().eventType;
-          const entryDate = new Date(doc.data().timestamp.toDate());
+          const userEmail = doc.data().email;
 
-          if (entryDate >= today) {
-            const userEmail = doc.data().email;
-
-            if (eventType === 'Time In') {
-              presentCount++;
-            } else if (eventType === 'Time Out' && !absentUsers.has(userEmail)) {
-              absentUsers.add(userEmail);
-              absentCount++;
-            }
+          if (eventType === 'Time In') {
+            presentCount++;
+          } else if (eventType === 'Time Out' && !absentUsers.has(userEmail)) {
+            // Check if the user missed "Time In" on the same day
+            absentUsers.add(userEmail);
+            absentCount++;
           }
         });
 
+        // Set the counts for presents and absents
         setPresentCount(presentCount);
         setAbsentCount(absentCount);
       } catch (error) {
-        console.error('Error fetching time entries:', error.message);
+        console.error('Error fetching time entries:', error);
       }
     };
 
     // Fetch user count and time entries when the component mounts
     fetchUserCounts();
     fetchTimeEntries();
-  }, [navigation, userCount, presentCount, absentCount]);
+  }, []);
+
+  // Function to check if it's a new day
+  function isNewDay() {
+    // Implement your own logic to check if it's a new day, e.g., by comparing with a stored day
+    // For simplicity, this function returns true every time it's called
+    return true;
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.cardLabel}>Total Number of Employees:</Text>
+        <Text style={styles.cardText}>Total Number of Employees:</Text>
         <Text style={styles.cardValue}>{userCount}</Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardLabel}>Present Today:</Text>
+        <Text style={styles.cardText}>Present Today:</Text>
         <Text style={styles.cardValue}>{presentCount}</Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardLabel}>Absent Today:</Text>
+        <Text style={styles.cardText}>Absent Today:</Text>
         <Text style={styles.cardValue}>{absentCount}</Text>
       </View>
     </View>
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5F5',
+    paddingHorizontal: 20,
   },
   card: {
     backgroundColor: '#fff',
@@ -117,7 +113,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     width: '100%',
   },
-  cardLabel: {
+  cardText: {
     fontSize: 18,
     marginBottom: 10,
     color: '#333',
@@ -125,11 +121,8 @@ const styles = StyleSheet.create({
   },
   cardValue: {
     fontSize: 24,
-    color: '#0782F9',
+    color: '#0782F9', // or your preferred color
     fontWeight: 'bold',
-  },
-  headerBackIcon: {
-    marginLeft: 16,
   },
 });
 
